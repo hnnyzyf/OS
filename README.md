@@ -22,7 +22,7 @@ tar xjvf qemu-2.0.0.tar.bz2
 #切换指定目录
 cd qemu-2.0.0 //如果使用的是git下载的源码，执行cd qemu
 #configure
-./configure --enable-kvm --enable-debug --enable-vnc --enable-werror --predix=/usr/local/qemu
+./configure --enable-kvm --enable-debug --enable-vnc --enable-werror --prefix=/usr/local/qemu
 # 编译
 make -j8
 #安装
