@@ -3,7 +3,7 @@
 # Author:YFzhang
 # mail:hnnyzyf2013@163.com
 # Created Time:2016年06月03日 星期五 23时20分12秒
-# Last Modified:2016年06月03日 星期五 23时38分57秒
+# Last Modified:2016年06月04日 星期六 01时05分03秒
 ####################################################################
 OS
 #####环境配置
@@ -27,29 +27,20 @@ cd qemu-2.0.0 //如果使用的是git下载的源码，执行cd qemu
 make -j8
 #安装
 sudo make install
-
 #依赖库
 yum install autoconf
 yum install automake
 yum install libtool
-
-
 #########################################################################
 qemu安装过程中可能会出现glib缺少，添加方法如下
-
 wget  http://ftp.gnome.org/pub/GNOME/sources/glib/2.12/glib-2.12.0.tar.gz
 tar zxvf glib-2.12.0.tar.gz
 cd glib-2.12.0
 ./configure
 make
 make install
-
-
-
-
 #依赖库如下
 yum Install gettext
 yum install autoconf
 yum install automake
 yum install libtool
-
