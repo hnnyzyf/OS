@@ -36,12 +36,27 @@ C_FLAGS=-c -Wall -m32 -ggdb -gstabs+ -nostdinc -fno-builtin -fno-stack-protector
 
 
 #LD链接器的链接选项
-
+#-T tools/kernel.ld 读链接文件
+#-m elf_i386 指定
+# -nostdlib 仅搜索那些在命令行上显式指定的库路径. 在连接脚本中(包含在命令行上指定的连接脚本)指定的库路径都被忽略.
 LD_FLAGS=-T tools/kernel.ld -m elf_i386 -nostdlib
+
+#汇编编译器NASM的编译选项
+#-f elf  编译成elf格式的文件
+#-g 该选项可用来在指定格式的输出文件中产生调试信息
+#-F 该选项可以用来为输出文件选择一个调试格式
 ASM_FLAGS=-f elf -g -F stabs
 
+
+#all这个伪目标是所有目标的目标，其功能一般是编译所有的目标。
 all:$(S_OBJECTS) $(C_OBJECTS) link update_image
 
+
+
+
+#$<表示所有的依赖目标集
+#$@表示所有的目标集
+#".c.o"是双后缀规则，意义就是".c"是源文件的后缀，".o"是目标文件的后缀
 .c.o:
 	@echo 编译代码文件 $< ...
 	$(CC) $(C_FLAGS) $< -o $@
@@ -49,9 +64,11 @@ all:$(S_OBJECTS) $(C_OBJECTS) link update_image
 .s.o:
 	@echo 编译汇编文件 $< ...
 	$(ASM) $(ASM_FLAGS) $<
+
 link:
 	@echo 编译内核文件..
 	$(LD) $(LD_FLAGS) $(S_OBJECTS) $(C_OBJECTS) -o hx_kernel
+
 
 .PHONY:clean
 clean:
