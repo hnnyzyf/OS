@@ -44,3 +44,12 @@ yum Install gettext
 yum install autoconf
 yum install automake
 yum install libtool
+
+#软盘镜像建立命令
+dd if=/dev/zero of=floppy.img bs=512 count=2880
+#建立一个512kb,2880个扇区的软盘
+
+#在软盘上建立文件系统
+#如果未找到mkdosfs命令，请下载yum install dosfstools
+sudo mkdosfs -F 12 floppy.img
+
