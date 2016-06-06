@@ -45,8 +45,30 @@ dd MBOOT_CHECKSUM		;检测数值，其含义在定义处
 
 [GLOBAL start]			;向外部声明内核代码入口，此处提供该声明给链接器
 [GLOBAL hlb_mboot_ptr]	;向外部声明struct
+[EXTERN kern_entry]		;声明内核C代码的入口函数
 
+start:
+	cli							;此时还没有设置好保护模式的中断处理，要关闭中断
+								;所以必须关闭中断
+	mov esp,STACK_TOP			;设置内核栈地址
+	mov ebp,0					;栈指针修改为0
+	and esp,0FFFFFFF0H			;栈地址按照字节对齐16
+	mov [glb_mboot_ptr],ebx		;将ebx中存储的指针存入全局变量
+	call kern_entry				;调用内核入口函数
 
+stop:
+	htl							;停机指令，可以降低CPU消耗
+	jmp stop					;到这里结束，关机什么的后边说
+
+;----------------------------------------------------------------------
+
+section .bss					;未初始化的数据段从这里开始
+stack：
+	resb 32768					;这里作为内核栈
+glb_mboot_ptr:					;全局的Multiboot的结构体指针
+	resb 4
+
+STAK_TOP equ $-stack-1			;内核栈顶,$符指代是当前地址	
 
 
 
