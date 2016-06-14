@@ -39,7 +39,7 @@ C_FLAGS=-c -Wall -m32 -ggdb -gstabs+ -nostdinc -fno-builtin -fno-stack-protector
 #-T tools/kernel.ld 读链接文件
 #-m elf_i386 指定
 # -nostdlib 仅搜索那些在命令行上显式指定的库路径. 在连接脚本中(包含在命令行上指定的连接脚本)指定的库路径都被忽略.
-LD_FLAGS=-T script/kernel.ld -m elf_i386 -nostdlib
+LD_FLAGS=-T script/kernel_temp.ld -m elf_i386 -nostdlib
 
 #汇编编译器NASM的编译选项
 #-f elf  编译成elf格式的文件
@@ -76,8 +76,8 @@ clean:
 
 .PHONY:update_image
 update_image:
-	sudo mount floppy.img /mnt/kernel
-	sudo cp hx_kernel /mnt/lernel/hx_kernel
+	sudo mount floppy.img /mnt/kernel -o loop
+	sudo cp hx_kernel /mnt/kernel/hx_kernel
 	sleep 1
 	sudo umount /mnt/kernel
 
@@ -101,7 +101,7 @@ bochs:
 debug:
 	qemu -S -s -fda floppy.img -boot a &
 	sleep 1 
-	cgbd -x script/gdbinit
+	cgdb -x script/gdbinit
 	
 	
 

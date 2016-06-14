@@ -44,7 +44,7 @@ dd MBOOT_HEADER_FLAGS	;GRUB的一些加载时选项，其详细注释在定义�
 dd MBOOT_CHECKSUM		;检测数值，其含义在定义处
 
 [GLOBAL start]			;向外部声明内核代码入口，此处提供该声明给链接器
-[GLOBAL hlb_mboot_ptr]	;向外部声明struct
+[GLOBAL glb_mboot_ptr]	;向外部声明struct
 [EXTERN kern_entry]		;声明内核C代码的入口函数
 
 start:
