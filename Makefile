@@ -91,7 +91,7 @@ umount_image:
 
 .PHONY:qemu
 qemu:
-	qemu -fda floppy.img -boot a
+	qemu -fda floppy.img -boot a -curses
 
 .PHONY:bochs
 bochs:
