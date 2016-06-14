@@ -45,19 +45,7 @@ yum install autoconf
 yum install automake
 yum install libtool
 #需要安装SDL支持
-yum install SDL*
-
-
-
-
-
-
-
-
-
-
-
-
+SDL相关需要安装
 ############################################################################
 #软盘镜像建立命令
 dd if=/dev/zero of=floppy.img bs=512 count=2880
