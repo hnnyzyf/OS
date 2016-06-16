@@ -17,7 +17,7 @@ SECTIONS
 		*(.text)
 			. = ALIGN(4096);
 	}
-	.data ：
+	.data :
 	{
 		*(.data)
 		*(.rodata )
@@ -26,17 +26,17 @@ SECTIONS
 	.bss :
 	{
 		*(.bss)
-		. = ALGIN(4096);
+		. = ALIGN(4096);
 	}
 	.stab :
 	{
 		*( .stab )
-			. = ALGIN(4096);
+			. = ALIGN(4096);
 	}
 	.stabstr :
 	{
 		*(.stabstr )
-			. = ALGIN(4096);
+			. = ALIGN(4096);
 	}
 
     /DISCARD/ :
