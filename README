@@ -22,6 +22,8 @@ tar xjvf qemu-2.0.0.tar.bz2
 #切换指定目录
 cd qemu-2.0.0 //如果使用的是git下载的源码，执行cd qemu
 #configure
+#源代码的目录下有configure文件，可以查看选项
+#对于SDL和curse，请在配置里添加yes保证如果有问题就会报出错误来
 ./configure --enable-kvm --enable-debug --enable-vnc --enable-werror --prefix=/usr/local/qemu
 # 编译
 make -j8
@@ -32,6 +34,8 @@ yum install autoconf
 yum install automake
 yum install libtool
 #########################################################################
+#该方法下只是安装了glib，实际的话，需要安装glib-devel
+#直接yum search glib2，安装devel包即可
 qemu安装过程中可能会出现glib缺少，添加方法如下
 wget  http://ftp.gnome.org/pub/GNOME/sources/glib/2.12/glib-2.12.0.tar.gz
 tar zxvf glib-2.12.0.tar.gz
@@ -46,6 +50,7 @@ yum install automake
 yum install libtool
 #需要安装SDL支持
 SDL相关需要安装
+#qemu添加-curses命令，需要curse-devel包来配合编译安装
 ############################################################################
 #软盘镜像建立命令
 dd if=/dev/zero of=floppy.img bs=512 count=2880
