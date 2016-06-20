@@ -141,9 +141,82 @@ void console_putc_color(char c,real_color_t back,real_color_t fore)
 }
 
 
+//打印一个字符串
+void console_write(char *cstr)
+{
+	char *temp=*cstr;
+	//cstr不等于零
+	while(temp!='\0')
+	{
+		console_putc_color(*temp,0,15);
+		*temp=*temp+1;
+	}
+}
+
+//打印一个带颜色的字符串
+void console_write_color(char *cstr,real_color_t back,real_color_t fore)
+{
+	char *temp=cstr;
+	//cstr不等于零
+	while(temp!='\0')
+	{
+		console_putc_color(*temp,back,fore);
+		*temp=*temp+1;
+	}
+}
+
+//输出十六进制的整型数
+void console_write_hex(uint32_t n,real_color_t back,real_color_t fore)
+{
+	//就是输出0xdad这样一个字符串
+	//先输出0x
+	console_write("0x");
+	uint32_t temp;
+	//分别输出4位,从高到低分别移位
+	for(i=1;i<9;i++)
+	{
+		temp=n;
+		temp=(temp>>((8-i)*4));
+		temp=temp&(0xF);
+		//判断是0-9还是a-f
+		if(temp<0xA)
+		{
+			console_putc_color(temp+'0',back,fore);
+		}
+		else
+		{
+			console_putc_color(temp- 0xA+'a',back,fore);
+		}
+	}
+}
 
 
-
+//屏幕输出一个10进制的整型数
+void console_write_dec(uint32_t n,real_color_t back,real_color_t fore)
+{
+	//n本身为一个十进制的整型数
+	//需要获取每一个位置的个数
+	uint32_t temp=n;
+	char str[32];
+	int i=0;
+	//初始化
+	for(i=0;i<32;i++)
+	{
+		char str[i]=' ';
+	}
+	while(temp!=0)
+	{
+		i--;
+		//最后一位为除以10的余数
+		str[i]=temp%10;
+		//缩小十倍
+		temp=temp/10;
+	}
+	for(i;i<32;i++)
+	{
+		console_putc_color(str[i]+'0',back,fore);
+	}
+}
 
 
 
