@@ -1,11 +1,10 @@
-//###################################################################
-//# File Name:types.h
-//# Author:YFzhang
-//# mail:hnnyzyf2013@163.com
-//# Created Time:2016年06月13日 星期一 12时04分25秒
-//# Last Modified2016年06月13日 星期一 12时04分25秒
-//####################################################################
-
+/*###########################################
+# File Name:types.h
+# Author:YFzhang
+# mail:hnnyzyf2013@163.com
+# Created Time:Fri 17 Jun 2016 04:42:12 AM CST
+# Last ModifiedFri 17 Jun 2016 04:42:12 AM CST
+###########################################*/
 #ifndef INCLUDE_TYPES_H
 #define INCLUDE_TYPES_H
 
