@@ -5,14 +5,14 @@
 //# Created Time:2016年06月13日 星期一 12时03分37秒
 //# Last Modified2016年06月13日 星期一 12时03分37秒
 //####################################################################
-#include "types.h"
 #include "console.h"
-#include "common.h"
+
+
 int kern_entry()
 {
 	
 	console_clear();
-	char *str="hello world!";
-	console_write(str);
+	char *str="hello world!\n";
+	console_write_color(str,rc_black,rc_green);
 	return 0;
 }

@@ -123,7 +123,7 @@ void console_putc_color(char c,real_color_t back,real_color_t fore)
 		cursor_y++;
 	}
 	//如果是回车
-	else if(c=='r')
+	else if(c=='\r')
 	{
 		cursor_x=0;
 		cursor_y++;
