@@ -49,8 +49,8 @@ inline void bzero(void *dest,uint32_t len)
 //比较两个字符串的大小,比较每一位的asicc码
 inline int strcmp(const char *str1,const char *str2)
 {
-	char *str1_temp=(uint8_t *)str1;
-	char *str2_temp=(uint8_t *)str2;
+	char *str1_temp=(char *)str1;
+	char *str2_temp=(char *)str2;
 	//开始判断是否相等
 	while(*str1_temp!='\0'||*str2_temp!='\0')
 	{
@@ -91,7 +91,7 @@ inline int strcmp(const char *str1,const char *str2)
 
 
 //strcpy拷贝字符串
-inline char * strcpy(char *dest.const char *src)
+inline char * strcpy(char *dest,const char *src)
 {
 	char *dest_temp=(uint8_t *)dest;
 	char *src_temp=(uint8_t *)src;
@@ -109,7 +109,6 @@ inline char * strcpy(char *dest.const char *src)
 inline char * strcat(char *dest,const char *src)
 {
 	char *dest_temp=(char *)dest;
-	char *src_temp=(char *)src;
 	while(*dest_temp!='\0')
 	{
 		dest_temp++;
