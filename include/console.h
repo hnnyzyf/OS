@@ -32,7 +32,9 @@ enum real_color
 	rc_white=15
 } real_color_t;
 
+
 //清屏操作
+
 void console_clear();
 
 //屏幕输出一个字符带颜色

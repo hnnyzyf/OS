@@ -42,7 +42,7 @@ inline uint16_t inw(uint16_t port)
 			: "=a" (ret) 
 			: "dN" (port)
 		);
-	return ret
+	return ret;
 }
 
 

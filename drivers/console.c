@@ -8,9 +8,8 @@
 
 //VGA的显示缓冲的起点是0xb8000
 
-#include "types.h"
 #include "console.h"
-
+#include "common.h"
 static uint16_t *video_memory=(uint16_t *)0xB8000;
 
 //屏幕光标的坐标
@@ -58,7 +57,7 @@ void console_clear()
 static void scroll()
 {
 	//先定义一个8位格式，attribute_byte 被构造出一个黑底白字的描述格式
-	uint8_t attribute_byte=(0<<4)|(15&0x0F);
+	uint8_t attribute_byte=(0<<4)|(15 & 0x0F);
 	//space是0x20
 	uint16_t blank=0x20|(attribute_byte<<8);
 
@@ -86,15 +85,21 @@ static void scroll()
 //屏幕输出一个字符带颜色
 void console_putc_color(char c,real_color_t back,real_color_t fore)
 {
-	//先构造出后8位显示颜色
-	//先将back数据变为8位，然后左移4位，然后fore变为8为，直接与
-	uint8_t attribute_byte=(((back&(0x0F)))<<4)|(fore&(0x0F));
+	//首先构造出颜色，使用8个bit
+	uint8_t back_color=(uint8_t)back;
+	uint8_t fore_color=(uint8_t)fore;
+	//接下来构造后8位的颜色属性
+	//back位于8bit的高4为，fore位于8bit的低4位
+	//需要将back左移4位
+	//取fore的后4位
+	//二者相或得到8位颜色属性
+	uint8_t attribute_byte=(back_color<<4)|(fore_color & 0x0F);
 	//构造需要输出的字符
 	//高8位为颜色控制，低8位为字符，其实就是内码asicc码
 	uint16_t attribute=(attribute_byte<<8);
 	//接下来开始判断c的内容，根据内容来判断要实现的操作
 	//如果是退格符
-	if(c==0x88 &&cursor_x!=0)
+	if(c==0x88 && cursor_x!=0)
 	{	
 		//如果该退回上一行
 		cursor_x--;
@@ -115,7 +120,7 @@ void console_putc_color(char c,real_color_t back,real_color_t fore)
 	else if(c=='\n')
 	{
 		cursor_x=0;
-		cursor_y++
+		cursor_y++;
 	}
 	//如果是回车
 	else if(c=='r')
@@ -147,12 +152,12 @@ void console_putc_color(char c,real_color_t back,real_color_t fore)
 //打印一个字符串
 void console_write(char *cstr)
 {
-	char *temp=*cstr;
+	char *temp=cstr;
 	//cstr不等于零
-	while(temp!='\0')
+	while(*temp!='\0')
 	{
 		console_putc_color(*temp,0,15);
-		*temp=*temp+1;
+		temp=temp+1;
 	}
 }
 
@@ -161,10 +166,10 @@ void console_write_color(char *cstr,real_color_t back,real_color_t fore)
 {
 	char *temp=cstr;
 	//cstr不等于零
-	while(temp!='\0')
+	while(*temp!='\0')
 	{
 		console_putc_color(*temp,back,fore);
-		*temp=*temp+1;
+		temp=temp+1;
 	}
 }
 
@@ -176,6 +181,7 @@ void console_write_hex(uint32_t n,real_color_t back,real_color_t fore)
 	console_write("0x");
 	uint32_t temp;
 	//分别输出4位,从高到低分别移位
+	int i;
 	for(i=1;i<9;i++)
 	{
 		temp=n;
@@ -205,7 +211,7 @@ void console_write_dec(uint32_t n,real_color_t back,real_color_t fore)
 	//初始化
 	for(i=0;i<32;i++)
 	{
-		char str[i]=' ';
+		str[i]=' ';
 	}
 	while(temp!=0)
 	{
