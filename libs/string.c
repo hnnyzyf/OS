@@ -3,7 +3,7 @@
 # Author:YFzhang
 # mail:hnnyzyf2013@163.com
 # Created Time:Tue 21 Jun 2016 07:25:17 PM CST
-# Last Modified:Tue 21 Jun 2016 09:22:14 PM CST
+# Last Modified:Tue 21 Jun 2016 10:49:34 PM CST
 ##########################################*/
 
 
@@ -16,13 +16,9 @@
 inline void memcpy(uint8_t *dest,const uint8_t *src,uint32_t len)
 {
 	//先判断内存地址能否重叠
-	uint8_t *dest_temp=dest;
-	uint8_t *src_temp=src;
-	if((src_temp<=desc_temp+len && dest_temp>=src_temp)||(dest_temp+len>=src_temp && dest_temp+len<=src_temp+len))
-	{
-		break;
-	}
-	else
+	uint8_t *dest_temp=(uint8_t *)dest;
+	uint8_t *src_temp=(uint8_t *)src;
+	if(src_temp>dest_temp+len ||src_temp+len<dest_temp)
 	{
 		while(len--!=0)
 		{
@@ -53,8 +49,8 @@ inline void bzero(void *dest,uint32_t len)
 //比较两个字符串的大小,比较每一位的asicc码
 inline int strcmp(const char *str1,const char *str2)
 {
-	char *str1_temp=str1;
-	char *str2_temp=str2;
+	char *str1_temp=(uint8_t *)str1;
+	char *str2_temp=(uint8_t *)str2;
 	//开始判断是否相等
 	while(*str1_temp!='\0'||*str2_temp!='\0')
 	{
@@ -97,8 +93,8 @@ inline int strcmp(const char *str1,const char *str2)
 //strcpy拷贝字符串
 inline char * strcpy(char *dest.const char *src)
 {
-	char *dest_temp=dest;
-	char *src_temp=src;
+	char *dest_temp=(uint8_t *)dest;
+	char *src_temp=(uint8_t *)src;
 	while(*src_temp!='\0')
 	{
 		*dest_temp++=*src_temp++;
@@ -112,11 +108,11 @@ inline char * strcpy(char *dest.const char *src)
 //strcat 连接字符串
 inline char * strcat(char *dest,const char *src)
 {
-	char *dest_temp=dest;
-	char *src_temp=src;
-	while(*dest_temp++!='\0')
+	char *dest_temp=(char *)dest;
+	char *src_temp=(char *)src;
+	while(*dest_temp!='\0')
 	{
-		continue;
+		dest_temp++;
 	}
 	//复制字符串
 	strcpy(dest_temp,src);
@@ -126,7 +122,7 @@ inline char * strcat(char *dest,const char *src)
 //strlen 计算字符串长度
 inline int strlen(const char *src)
 {
-	char *src_temp=src;
+	char *src_temp=(char *)src;
 	while(*src_temp++!='\0')
 	{
 		continue;
