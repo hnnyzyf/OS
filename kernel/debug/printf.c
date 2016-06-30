@@ -14,16 +14,24 @@
 
 
 
+
+
+//函数流程
+//声明静态变量buff------>根据每一个参数写入buff------->将buff视为字符串进行输出
 void printf(const char *format,...)
 {
 	//声明变量
+	//声明一个静态变量，生存周期是在该函数内
+	static char buff[2048];
 	va_list va;
 	char *format_temp=format;
 	//指向第一个参数
 	va_start(va,format);
 	//停止参数读取的终点是format
-	vsprintf(format,va);
+	//将每一个参数写入buff中
+	vsprintf(buff,format,va);
 	va_end(va);
+	console_write(buff);
 }
 
 
@@ -34,130 +42,160 @@ void printf_color(real_color_t back,real_color_t fore,const char *foramt,...)
 }
 
 
-//获得字符类型
-//
-static pr_type_t gettype(char *format)
-{
-	char type=*format;
-	switch(type)
-	{
-		case 'd':return pr_int;break;
-		case 'o':return pr_unsigned_int8;break;
-		case 'u':return pr_unsigned_int10;break;
-		case 'x':
-		case 'X':return pr_unsigned_int16;break;
-		case 'f':return pr_float;break;
-		case 'l':return pr_double;break;
-		case 'c':return pr_char;break;
-		case 's':
-		case 'S':return pr_string;break;
-		case 'p':return pr_void;break;
-		default:break;
-	}
-	//不存在该类型的输出
-	return false;
-}
-
-
-
 
 
 
 
 
 //输出每一个类型的数据
-static void vsprintf(char *format,va_list va)
+//vsprintf只用于本文件内，所以定义为静态
+//该函数的流程如下
+//读取每一个字
+
+//一下宏定义的目的是为了判断输出的格式
+//定义为2进制，每一位表示是否存在对应的输出格式
+//二进制表示1111
+//第一位表示是否有左右对齐
+#define left		 1;  //左对齐1，右对齐0，默认左对齐
+#define Hashtag		 8;//根据需要输出#对应的情况，1为需要，0为不需要
+#define width		2;//整个输出需要的宽度，1为存在，0为不存在
+#define dot			 4;//根据精度输出固定的长度,1为存在，0为不存在
+
+
+//该函数用来将内容赋予buff
+static char *content(char *buff,unsigned char int data_format,pr_type_t type,int word_width,int precision,va_list va)
 {
-	char *format_temp=format;
-	//中止条件是'\0'
-	int temp1=0;
-	unsigned int temp2=0;
-	float temp3=0;
-	double temp4=0;
-	char temp5=0;
-	char *temp6=(char *)0;
-	while(format_temp!='\0')
+	//用来记录每一个数字位的数据
+	char digit[16]="0123456789ABCDEF";
+	//如果是有符号数，默认需要判断类型，是否输出-号
+	if(type==pr_int)
 	{
-		//不等于%,则直接在屏幕上打印
-		if(*format_temp!='%')
-		{
-			console_putc_color(*format_temp,0,15);
-			format_temp++;
-		}
-		//等于%直接读取下一个字符
-		else
-		{
-			//读取下一个字符
-			format_temp++;
-			//开始根据条件判断
-			switch(gettype(format_temp))
-			{
-				//int类型
-				case pr_int:
-					temp1=va_arg(va,int);
-					if(temp1<0)
-					{
-						//先输出一个减号
-						console_putc_color('-',0,15);
-						//再输出十进制数
-						console_write_dec(-temp1,0,15);
-					}
-
-					break;
-				//usigned int 8进制 以后再写
-				case pr_unsigned_int8:
-					temp2=va_arg(va,unsigned int);
-
-					break;
-				//unsigned int 10进制
-				case pr_unsigned_int10:
-					temp2=va_arg(va,unsigned int);
-					console_write_dec(temp2,0,15);
-					break;
-				//unsigned int 16进制
-				case pr_unsigned_int16:
-					temp2=va_arg(va,unsigned int);
-					console_write_hex(temp2,0,15);
-					break;
-				case pr_float:
-					/*
-					//temp3=va_arg(va,float);
-					//先获得符号位,最高位为1,则为负,最低位为0,则为正
-					//需要将
-
-					//if((((uint32_t)temp3)>>31)& 0xF==0x1)
-					//{
-					//	console_putc_color('-',0,15);
-					//}
-					//非负，则什么都不做，读取下8位为指数位
-					//右移15位，获得对应的十六进制数
-					//else
-					//{
-						((temp>>15)& 0x0FF)
-					}
-					*/
-					break;
-				case pr_double:
-					break;
-					//输出单个字符
-				case pr_char:
-					temp5=va_arg(va,char);
-					console_putc_color(temp5,0,15);
-					break;
-				case pr_string:
-					temp5=va_arg(va,char *);
-					console_
-				case pr_void:
-
-					break;
-				default:break;
-			}
-		}
+		
 	}
+	
+
 }
 
 
 
+
+
+//10进制获得对应n进制每一位的数据
+
+
+
+
+
+static void vsprintf(char *buff,char *format,va_list va)
+{
+	//记录输出字符的宽度,默认为0
+	int word_width=0;
+	//记录输出字符的精度,-1表示默认精度
+	int precision=-1;
+	//记录要输出的数据的格式
+	unsigned char int data_format=0;
+	//中止的条件,是format字符串到达末尾
+	while(*format!='\0')
+	{
+		//首先判断是不是%号，不是的话则将其放入到buff中
+		if(*format!='%')
+		{
+			*buff++=*format;
+			format++;
+		}
+		//如果是%号的话,则开始读取下一个字符
+		else
+		{
+			format++;
+			//在指定地方跳出循环
+			
+			//%后有如下几种情况
+			//1.直接跟d,o,x/X,u,f,lf,c,s/S
+			//2.跟上-,+, ,#
+			//3.输出最小宽度，要不按照实际输出，要不补0
+			//4.精度控制有.的话，输出的是数字，字符，或者截取
+			//5.长度格式控制，h代表短整型，l表示长整型
+			//开始判断下一个字符是什么
+			
+			//---------------------------------------------输出格式部分判断------------------------------
+			//存在对齐符号
+			if(*format=='-')
+			{
+				data_format=data_format+left;
+				//移动到下一个字符字符
+				format++;
+			}
+			//如果存在数字，需要设置宽度
+			if(*format>='0'&& *format<='9')
+			{
+				word_width=*format;
+				data_format=data_format+width;
+				format++;
+			}
+			//设置完宽度，需要看下一位的精度
+			if(*format=='.')
+			{
+				data_format=data_format+dot;
+				format++;
+				precision=*format;
+				format++;
+			}
+			if(*format=='#')
+			{
+				data_format=data_format+hashtag;
+				format++;
+			}
+			//---------------------------------------------输出类型部分判断------------------------------
+			switch(*format)
+			{
+				//输出int类型的十进制数
+				case 'd':
+				case 'i':		
+					break;
+				//输出无符号的8进制数
+				case 'o':
+					break;
+				//输出无符号的十六进制数
+				case 'x':
+				case 'X':
+					break;
+				//输出无符号的十进制数
+				case 'u':
+					break;
+				//输出单个字符
+				case 'c':
+					break;
+				//输出字符串
+				case 's':
+				case 'S':
+					break;
+				//双精度类型，默认为6
+				case 'f':
+					break;
+
+			}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		}
+
+		}
+	}
+}
 
 
 

@@ -11,6 +11,7 @@
 
 
 //内核打印函数
+//函数流程
 void printf(const char *format,...);
 
 //带颜色的内核打印函数
