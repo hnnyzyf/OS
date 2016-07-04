@@ -57,20 +57,23 @@ void printf_color(real_color_t back,real_color_t fore,const char *foramt,...)
 //二进制表示1111
 //第一位表示是否有左右对齐
 #define left		 1;  //左对齐1，右对齐0，默认左对齐
-#define Hashtag		 8;//根据需要输出#对应的情况，1为需要，0为不需要
+//#define Hashtag		 8;//根据需要输出#对应的情况，1为需要，0为不需要
 #define width		2;//整个输出需要的宽度，1为存在，0为不存在
 #define dot			 4;//根据精度输出固定的长度,1为存在，0为不存在
 
 
 //该函数用来将内容赋予buff
-static char *content(char *buff,unsigned char int data_format,pr_type_t type,int word_width,int precision,va_list va)
+static void content(char *buff,unsigned char data_format,pr_type_t type,int word_width,int precision,va_list va)
 {
 	//用来记录每一个数字位的数据
 	char digit[16]="0123456789ABCDEF";
+	char temp[32]
+	int temp1;
 	//如果是有符号数，默认需要判断类型，是否输出-号
 	if(type==pr_int)
 	{
-		
+		temp1=va_va_arg(va,int);
+
 	}
 	
 
@@ -88,6 +91,7 @@ static char *content(char *buff,unsigned char int data_format,pr_type_t type,int
 
 static void vsprintf(char *buff,char *format,va_list va)
 {
+	char * buff_temp=buff;
 	//记录输出字符的宽度,默认为0
 	int word_width=0;
 	//记录输出字符的精度,-1表示默认精度
@@ -100,7 +104,7 @@ static void vsprintf(char *buff,char *format,va_list va)
 		//首先判断是不是%号，不是的话则将其放入到buff中
 		if(*format!='%')
 		{
-			*buff++=*format;
+			*buff_temp++=*format;
 			format++;
 		}
 		//如果是%号的话,则开始读取下一个字符
@@ -109,12 +113,10 @@ static void vsprintf(char *buff,char *format,va_list va)
 			format++;
 			//在指定地方跳出循环
 			
-			//%后有如下几种情况
-			//1.直接跟d,o,x/X,u,f,lf,c,s/S
-			//2.跟上-,+, ,#
-			//3.输出最小宽度，要不按照实际输出，要不补0
-			//4.精度控制有.的话，输出的是数字，字符，或者截取
-			//5.长度格式控制，h代表短整型，l表示长整型
+			//%后的判断步骤
+			//1.首先判断格式控制符 -
+			//2.然后判断-后的格式是1.1还是5的格式
+			//3.然后判断
 			//开始判断下一个字符是什么
 			
 			//---------------------------------------------输出格式部分判断------------------------------
@@ -137,12 +139,8 @@ static void vsprintf(char *buff,char *format,va_list va)
 			{
 				data_format=data_format+dot;
 				format++;
+				//获得小数的精度信息
 				precision=*format;
-				format++;
-			}
-			if(*format=='#')
-			{
-				data_format=data_format+hashtag;
 				format++;
 			}
 			//---------------------------------------------输出类型部分判断------------------------------
@@ -150,7 +148,8 @@ static void vsprintf(char *buff,char *format,va_list va)
 			{
 				//输出int类型的十进制数
 				case 'd':
-				case 'i':		
+				case 'i':
+					content(buff_temp,data_foramt,pr_int,word_width,precision,va);
 					break;
 				//输出无符号的8进制数
 				case 'o':
