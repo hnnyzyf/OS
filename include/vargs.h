@@ -29,29 +29,3 @@ typedef __builtin_va_list va_list;
 //首先将ap的地址强制转换为字符串，然后加上类型的对齐4的倍数，此为第一个参数的内存地
 //
 //define va_arg(ap,type) (*(type*)((ap+=_intsizeof(type))-_intsizeof(type)))
-//比如
-//char * format,int a,int b
-
-
-
-//内核打印函数
-//获取参数，根据每一个name，输出相应的参数
-//---读取format
-//---while(format)
-//------获得参数，输出结果
-
-//类型枚举
-typedef
-enum pr_type
-{
-	pr_int=1,
-	pr_unsigned_int8=2,
-	pr_unsigned_int10=3,
-	pr_unsigned_int16=4,
-	pr_float=5,
-	pr_double=6,
-	pr_char=7,
-	pr_string=8,
-	pr_void=9
-}pr_type_t;
-
