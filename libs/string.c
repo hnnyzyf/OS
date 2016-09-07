@@ -8,7 +8,7 @@
 
 
 #include "string.h"
-
+#include "types.h"
 
 //memcpy函数的实现
 //输入是地址 dest代表目标地址  src代表源地址 len代表要复制的字节数

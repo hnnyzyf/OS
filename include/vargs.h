@@ -32,3 +32,5 @@ typedef __builtin_va_list va_list;
 //比如
 //char * format,int a,int b
 
+
+

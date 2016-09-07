@@ -8,7 +8,6 @@
 
 
 #include "console.h"
-#include "common.h"
 #include "debug.h"
 #include "vargs.h"
 

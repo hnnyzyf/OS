@@ -10,7 +10,6 @@
 #define INCLUDE_CONSOLE_H_
 
 #include "types.h"
-
 #include "common.h"
 
 typedef 
