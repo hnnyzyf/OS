@@ -8,20 +8,31 @@
 #ifndef INCLUDE_TYPES_H
 #define INCLUDE_TYPES_H
 
+//定义NULL
 #ifndef NULL
 #define NULL 0
 #endif
 
+//定义TRUE和FALSE
 #ifndef TRUE
 #define TRUE 1
 #define FALSE 0
 #endif
 
+
+//定义size_t
+typedef unsigned int size_t;
+//定义无符号32位二进制
 typedef	unsigned int uint32_t;
+//定义有符号32位二进制
 typedef	int	int32_t;
+//定义有符号16位二进制
 typedef	unsigned short uint16_t;
+//定义无符号16位二进制
 typedef short int16_t;
+//定义无符号8位二进制
 typedef unsigned char uint8_t;
+//定义有符号8位二进制
 typedef char int8_t;
 
 #endif //INCLUDE_TYPES_H_

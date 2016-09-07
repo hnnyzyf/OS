@@ -9,7 +9,8 @@
 #define INCLUDE_COMMON_H_
 
 #include "types.h"
-
+//端口号为0-65535，即0到2^16-1，所有用uint16_t
+//端口一次读取一个字节，所以用uint8_t,一个char是一个字节
 //端口写一个字节
 void outb(uint16_t port,uint8_t value);
 

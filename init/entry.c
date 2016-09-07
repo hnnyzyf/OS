@@ -13,6 +13,6 @@ int kern_entry()
 	
 	console_clear();
 	char *str="hello world!\n";
-	console_write_color(str,rc_black,rc_green);
+	printf("%s",str);
 	return 0;
 }

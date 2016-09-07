@@ -11,12 +11,14 @@
 
 #include "types.h"
 
-void memcpy(uint8_t *dest,const uint8_t *src,uint32_t len);
+//void *类型可以代表接受任何类型的指针地址
+void memcpy(void *dest,const void *src,size_t len);
 
-void memset(void *dest,uint8_t val,uint32_t len);
+void memset(void *dest,uint8_t val,size_t len);
 
-void bzero(void *dest,uint32_t len);
+void bzero(void *dest,size_t len);
 
+//字符串操作
 int strcmp(const char *str1,const char *str2);
 
 char *strcpy(char *dest,const char *src);
