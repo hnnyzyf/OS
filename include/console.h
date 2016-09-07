@@ -11,6 +11,8 @@
 
 #include "types.h"
 
+#include "common.h"
+
 typedef 
 enum real_color
 {

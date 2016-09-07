@@ -29,3 +29,6 @@ typedef __builtin_va_list va_list;
 //首先将ap的地址强制转换为字符串，然后加上类型的对齐4的倍数，此为第一个参数的内存地
 //
 //define va_arg(ap,type) (*(type*)((ap+=_intsizeof(type))-_intsizeof(type)))
+//比如
+//char * format,int a,int b
+
