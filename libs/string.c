@@ -94,7 +94,7 @@ inline int strcmp(const char *str1,const char *str2)
 
 
 //strcpy拷贝字符串
-inline char * astrcpy(char *dest,const char *src)
+inline char * strcpy(char *dest,const char *src)
 {
 	//记下字符串的指针地址
 	char *start=dest;
