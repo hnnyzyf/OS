@@ -29,7 +29,7 @@ typedef struct multiboot_t
 	//--------------------以下是elf内核的段头段flag[5]-------------------------
 	uint32_t num;
 	uint32_t size;
-	uint32_t addr;
+	uint32_t addr;//存储的是elf的section_header地址,转换为对应类型指针类型即可获得相关信息
 	uint32_t shndx;
 	//-------------------flag[6]----------------------
 	uint32_t mmap_length;

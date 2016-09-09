@@ -63,4 +63,25 @@ typedef struct elf_symbol_t
 	uint16_t st_shndx;
 }__attribute__((packed)) elf_symbol_t;
 
+
+
+
+
+//--------------------------------------------elf信息---------------------------
+
+typedef struct elf_t
+{
+	elf_symbol_t *symtab;
+	uint32_t symtabsize;
+	const char *strtab;
+	uint32_t strtabsize;
+}elf_t;
+
+
+//从multiboot中读取elf信息
+elf_t elf_from_multiboot(multiboot_t *src);
+
+
+//查看符号表信息
+const char * elf_lookup_symbol(uint32_t addr,elf_t *elf);
 #endif
