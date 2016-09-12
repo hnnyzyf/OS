@@ -37,7 +37,7 @@ typedef struct elf_header_t
 
 typedef struct elf_section_t
 {
-	uint32_t sh_name;
+	uint32_t sh_name;//指的是名字在字符串表中的索引位置
 	uint32_t sh_type;
 	uint32_t sh_flags;
 	uint32_t sh_addr;
@@ -71,8 +71,10 @@ typedef struct elf_symbol_t
 
 typedef struct elf_t
 {
+	//符号表
 	elf_symbol_t *symtab;
 	uint32_t symtabsize;
+	//字符串表
 	const char *strtab;
 	uint32_t strtabsize;
 }elf_t;
