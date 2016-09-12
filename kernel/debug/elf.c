@@ -16,6 +16,8 @@ elf_t elf_from_multiboot(multiboot_t *src)
 {
 	int i;
 	elf_t elf;
+	//elf初始化
+	memset(&elf,0,sizeof(elf));
 	//将multiboot_t中的src->addr指针转换为section指针类型，则可以获取指针指向的目标地址的对应section结构
 	//获取节区header的指针
 	elf_section_t *section=(elf_section__t *)src->addr;
@@ -47,5 +49,22 @@ elf_t elf_from_multiboot(multiboot_t *src)
 }
 
 
-
+//查看符号信息
+//输入一个地址，查看对应的符号的情况
+const char *elf_lookup_symbol(uint32_t addr,elf_t *elf)
+{
+	int i;
+	//对于符号表中的每一个项目
+	//符号表的大小/每一项的大小
+	for(i=0;i<elf.symtabsize/sizeof(elf_symbol_t);i++)
+	{
+		//如果地址是在符号范围内
+		if((addr>=elf->symtab[i].st_value)&&(addr<elf->symtab[i].value+elf->[symtab].st_size))
+		{
+			return (const char *)(elf->strtab+elf->symtab[i].name)
+		}
+	}
+	//无结果返回NULL
+	return NULL;
+}
 
