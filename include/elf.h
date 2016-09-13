@@ -10,10 +10,11 @@
 #define INCLUDE_ELF_H
 
 #include "types.h"
+#include "multiboot.h"
 
-#define EI_NIDENT
+#define EI_NIDENT 16
 
-//-----------------------------------------elf的header数据结构-------------------------------------
+//-----------------------------------------elf的header数据结构-----------------------------------
 
 typedef struct elf_header_t
 {
@@ -81,6 +82,7 @@ typedef struct elf_t
 
 
 //从multiboot中读取elf信息
+
 elf_t elf_from_multiboot(multiboot_t *src);
 
 

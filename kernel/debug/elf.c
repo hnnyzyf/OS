@@ -8,6 +8,7 @@
 
 #include "string.h"
 #include "elf.h"
+#include "multiboot.h"
 
 
 //从multiboot_t中获取结构信息elf
@@ -17,14 +18,14 @@ elf_t elf_from_multiboot(multiboot_t *src)
 	int i;
 	elf_t elf;
 	//elf初始化
-	memset(&elf,0,sizeof(elf));
+	memset(&elf,0,sizeof(elf_t));
 	//将multiboot_t中的src->addr指针转换为section指针类型，则可以获取指针指向的目标地址的对应section结构
 	//获取节区header的指针
-	elf_section_t *section=(elf_section__t *)src->addr;
+	elf_section_t *section=(elf_section_t *)src->addr;
 	//获取节区header中项的总数
 	int length=src->num;
 	//获取字符串表的指针
-	uint32_t sh_addr=section[src->shndx]->sh_addr;
+	uint32_t sh_addr=section[src->shndx].sh_addr;
 	//向elf中开始填入数据
 	for(i=0;i<length;i++)
 	{
@@ -34,14 +35,16 @@ elf_t elf_from_multiboot(multiboot_t *src)
 		//判断是否是字符串表
 		if(strcmp(name,".strtab")==0)
 		{
+			//section不为指针
 			elf.strtab=(uint32_t *)section[i].sh_addr;
 			elf.strtabsize=section[i].sh_size;
 		}
 		//判断是否是符号表
 		if(strcmp(name,".symtab")==0)
 		{
+			//section不为指针
 			elf.strtab=(elf_symbol_t *)section[i].sh_addr;
-			elf.symtabsize=section[i].sh_size
+			elf.symtabsize=section[i].sh_size;
 		}
 	}
 	return elf;
@@ -56,12 +59,12 @@ const char *elf_lookup_symbol(uint32_t addr,elf_t *elf)
 	int i;
 	//对于符号表中的每一个项目
 	//符号表的大小/每一项的大小
-	for(i=0;i<elf.symtabsize/sizeof(elf_symbol_t);i++)
+	for(i=0;i<elf->symtabsize/sizeof(elf_symbol_t);i++)
 	{
 		//如果地址是在符号范围内
-		if((addr>=elf->symtab[i].st_value)&&(addr<elf->symtab[i].value+elf->[symtab].st_size))
+		if((addr>=elf->symtab[i].st_value)&&(addr<elf->symtab[i].st_value+elf->symtab[i].st_size))
 		{
-			return (const char *)(elf->strtab+elf->symtab[i].name)
+			return (const char *)(elf->strtab+elf->symtab[i].st_name);
 		}
 	}
 	//无结果返回NULL
