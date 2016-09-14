@@ -12,7 +12,9 @@ int kern_entry()
 {
 	
 	console_clear();
-	char *str="hello worldsadasdadaasa!\n";
-	printf("%s",str);
+	printf("Welcome to My OS!\n");
+	printf("This is only a demo\n");
+	printf("The function list is as followings:\n");
+	printf("1.print kernel stack!\n");
 	return 0;
 }
