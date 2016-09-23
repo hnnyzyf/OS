@@ -42,7 +42,7 @@ static void print_stack_trace()
 	uint32_t *esp;
 	//获得中止状态的ebp寄存器的值
 	//该函数返回的是一个地址，将其赋值给指针ebp
-	}
+	asm volatile("movl %%ebp,%0":"=r"(ebp));
 	
 	//ebp内存地址不为0，在启动的时候，所有的寄存器要初始化为0，所以中止条件为0,在boot.s中已经声明
 	while(ebp)
@@ -52,21 +52,23 @@ static void print_stack_trace()
 		//示意图
 		//h--------------------------------esp
 		//
+		//此处存储的是外层函数的下一条指令的地址
 		//
 		//m--------------------------------esp1
 		//
+		//此处存储的是压入栈中的ebp的内容，该ebp内存储的是外层函数指向的esp2的地址
 		//
-		//l--------------------------------esp2
+		//l--------------------------------esp2，此时该地址在ebp中存储
 		//*esp2取的是l-m之间的数据
 		//*esp1取的是m-h之间的数据
 		//当前ebp指向esp2，所以想获得call压入栈中的下一个指令的地址，只需要ebp+1
 		esp=ebp+1;
 		//esp取出esp中存储的地址，即call压入栈中的下一条指令的地址
 		//elf_lookup_symbol根据下一条指令的地址来提取符号符号文件中的符号
-		printf("address:0x%x    %s\n",esp,elf_lookup_symbol(esp,&kernel_elf));
+		printf("address:0x%x    %s\n",*esp,elf_lookup_symbol(*esp,&kernel_elf));
 		//当前函数中ebp存储的是esp，而*esp指向的内存单元中存储的是调用函数起始push进去的ebp
 		//所以新的ebp就是当前ebp存储的内容
-		ebp=(uint32_t *)ebp;
+		ebp=(uint32_t *)*ebp;
 	}
 }
 

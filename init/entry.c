@@ -10,11 +10,12 @@
 
 int kern_entry()
 {
-	
+	init_debug();
 	console_clear();
 	printf("Welcome to My OS!\n");
 	printf("This is only a demo\n");
 	printf("The function list is as followings:\n");
 	printf("1.print kernel stack!\n");
+	panic("this is a kernal stack information!\n");
 	return 0;
 }

@@ -13,6 +13,9 @@
 #include "multiboot.h"
 
 #define EI_NIDENT 16
+//判断符号表中符号的类型，具体见elf文件格式
+#define ELF32_ST_TYPE(i)	((i)&0xf)
+
 
 //-----------------------------------------elf的header数据结构-----------------------------------
 
