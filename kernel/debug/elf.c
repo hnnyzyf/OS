@@ -29,6 +29,9 @@ elf_t elf_from_multiboot(multiboot_t *src)
 	elf_section_t *section=(elf_section_t *)src->addr;
 	//获取section数组的长度
 	int length=src->num;
+#if(debug==1)
+	printf("the length of section header structure is %d\n",length);
+#endif
 	//----------------------------------------------------------获取字符串表的信息------------------------------------
 	//获取字符串表的地址,转化为指针类型
 	//serc->shndx存储的是在section头数组中字符串表的位置
@@ -52,8 +55,8 @@ elf_t elf_from_multiboot(multiboot_t *src)
 		//指向字符串表中第section[i].sh_name个字符串,因为sg_addr是整数类型，所以加sh_name就是偏移sh_name的字节数
 		//转化为字符串指针
 		const char *name=(const char *)(sh_addr+section[i].sh_name);
-#ifdef debug
-		printf("the %dth symbol is %s\n",i,name);
+#if (debug==1)
+		printf("the %dth symbol is %s and %d\n",i,name,section[i].sh_name);
 #endif
 		//判断是否是字符串表
 		if(strcmp(name,".strtab")==0)

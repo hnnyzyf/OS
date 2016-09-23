@@ -13,6 +13,8 @@
 #include "multiboot.h"
 #include "elf.h"
 
+#define debug 1
+
 
 //定义全局静态变量
 static elf_t kernel_elf;
@@ -23,6 +25,9 @@ void init_debug()
 	//因为已经定义了全局的multiboot结构体指针,所以直接提取从全局的multiboot中提取elf信息即可
 	//获取elf文件的字符串表和符号表
 	kernel_elf=elf_from_multiboot(glb_mboot_ptr);
+#ifdef debug
+	printf("the address of kernel file is %x\n",&kernel_elf);
+#endif
 }
 
 
@@ -75,8 +80,14 @@ static void print_stack_trace()
 //panic函数，当系统中止是打印出中止时的内核调用栈
 void panic(const char *msg)
 {
+	//初始化elf文件信息
+	printf("----------step 1:initialization---------\n");
+	printf("  Begin to init the elf file information\n");
+	init_debug();
+	printf("The elf file has been init\n");
+	printf("------step 1:initialiazation end--------\n");
+	printf("----------step 2:kernel stack-----------\n");
 	printf("error message:%s\n",msg);
-	printf("------------kernel stack----------------\n");
 	print_stack_trace();
-	printf("----------------end---------------------\n");
+	printf("-------------step 2:end-----------------\n");
 }

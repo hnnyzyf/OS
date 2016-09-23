@@ -10,7 +10,6 @@
 
 int kern_entry()
 {
-	init_debug();
 	console_clear();
 	printf("Welcome to My OS!\n");
 	printf("This is only a demo\n");
