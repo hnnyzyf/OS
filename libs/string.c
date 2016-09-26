@@ -58,7 +58,7 @@ inline int strcmp(const char *str1,const char *str2)
 	while(*str1!='\0'||*str2!='\0')
 	{
 		//如果相等，继续
-		if(*str1++!=*str2++)
+		if(*str1++==*str2++)
 		{
 			continue;
 		}
@@ -112,7 +112,7 @@ inline char * strcpy(char *dest,const char *src)
 inline char * strcat(char *dest,const char *src)
 {
 	//记下起始位置
-	char *start=desc;
+	char *start=dest;
 	while(*dest!='\0')
 	{
 		dest++;

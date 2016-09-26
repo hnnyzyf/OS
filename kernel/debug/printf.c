@@ -93,7 +93,8 @@ static int content(char *buff,char type,int location,va_list va,unsigned char da
 		temp=va_arg(va,char *);
 		while(*temp!='\0')
 		{
-			buff[++location]=*temp++;			
+			buff[++location]=*temp;
+			temp++;
 		}
 		break;
 		default:break;

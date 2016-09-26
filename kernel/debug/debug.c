@@ -25,7 +25,7 @@ void init_debug()
 	//因为已经定义了全局的multiboot结构体指针,所以直接提取从全局的multiboot中提取elf信息即可
 	//获取elf文件的字符串表和符号表
 	kernel_elf=elf_from_multiboot(glb_mboot_ptr);
-#ifdef debug
+#if (debug==1)
 	printf("the address of kernel file is %x\n",&kernel_elf);
 #endif
 }
@@ -70,7 +70,8 @@ static void print_stack_trace()
 		esp=ebp+1;
 		//esp取出esp中存储的地址，即call压入栈中的下一条指令的地址
 		//elf_lookup_symbol根据下一条指令的地址来提取符号符号文件中的符号
-		printf("address:0x%x    %s\n",*esp,elf_lookup_symbol(*esp,&kernel_elf));
+		printf("address:%x:",*esp);
+		printf("%s\n",elf_lookup_symbol(*esp,&kernel_elf));
 		//当前函数中ebp存储的是esp，而*esp指向的内存单元中存储的是调用函数起始push进去的ebp
 		//所以新的ebp就是当前ebp存储的内容
 		ebp=(uint32_t *)*ebp;

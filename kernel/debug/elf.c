@@ -11,7 +11,7 @@
 #include "multiboot.h"
 #include "debug.h"
 
-#define debug 1
+#define debug 0
 
 //从multiboot_t中获取结构信息elf
 
@@ -29,18 +29,22 @@ elf_t elf_from_multiboot(multiboot_t *src)
 	elf_section_t *section=(elf_section_t *)src->addr;
 	//获取section数组的长度
 	int length=src->num;
-#if(debug==1)
-	printf("the length of section header structure is %d\n",length);
-#endif
 	//----------------------------------------------------------获取字符串表的信息------------------------------------
 	//获取字符串表的地址,转化为指针类型
 	//serc->shndx存储的是在section头数组中字符串表的位置
 	//整数类型
 	uint32_t sh_addr=section[src->shndx].sh_addr;
+#if (debug==1)
+	printf("sh_addr:%x\n",sh_addr);
+	printf("section[src->shndx].sh_name:%x\n",section[src->shndx].sh_name);
+	printf("src->shndx:%x\n",src->shndx);
+	printf("section[1].sh_name:%x\n",section[1].sh_name);
+#endif
 	//----------------------------------------------------------elf中填入数据-----------------------------------------
 	//向elf中开始填入数据
 	for(i=0;i<length;i++)
 	{
+
 		//从第一个节区开始获取名称
 		//------------------------------------------------获取节区名称字符串的起始位置--------------------------------
 		//sh_name是从节区头部开始的偏移位置
@@ -56,23 +60,32 @@ elf_t elf_from_multiboot(multiboot_t *src)
 		//转化为字符串指针
 		const char *name=(const char *)(sh_addr+section[i].sh_name);
 #if (debug==1)
-		printf("the %dth symbol is %s and %d\n",i,name,section[i].sh_name);
+		printf("%d:",i);
+		printf(":name:%x:%s:",name,name);
+		printf("addr:%x\n",section[i].sh_addr);
+
 #endif
 		//判断是否是字符串表
 		if(strcmp(name,".strtab")==0)
 		{
 			//section不为指针
-			elf.strtab=(const char *)section[i].sh_addr;
+			printf("strtab:%x\n",section[i].sh_addr);
+			elf.strtab=(const char *)(section[i].sh_addr);
 			elf.strtabsize=section[i].sh_size;
 		}
 		//判断是否是符号表
 		if(strcmp(name,".symtab")==0)
 		{
 			//section不为指针
-			elf.symtab=(elf_symbol_t *)section[i].sh_addr;
+			printf("symtab:%x\n",section[i].sh_addr);
+			elf.symtab=(elf_symbol_t *)(section[i].sh_addr);
 			elf.symtabsize=section[i].sh_size;
 		}
 	}
+#if (debug==1)
+	printf("strtab:%x:",elf.strtab);
+	printf("symtab:%x\n",elf.symtab);
+#endif
 	return elf;
 
 }
@@ -85,11 +98,13 @@ const char *elf_lookup_symbol(uint32_t addr,elf_t *elf)
 	int i;
 	//对于符号表中的每一个项目
 	//符号表的大小/每一项的大小
-#ifdef debug	
-	printf("the number of symbol is %d\n",elf->symtabsize/sizeof(elf_symbol_t));
-#endif
 	for(i=0;i<elf->symtabsize/sizeof(elf_symbol_t);i++)
 	{
+#if (debug==1)
+		printf("i:%d:",i);
+		printf("symtab_name:%d:",i,elf->symtab[i].st_name);	
+		printf("name:%s\n",(elf->strtab+elf->symtab[i].st_name));
+#endif
 		//首先判断符号表中的符号是否是函数名称,为2时表示该符号是函数名称符号
 		if(ELF32_ST_TYPE(elf->symtab[i].st_info)==0x02)
 		{
