@@ -11,13 +11,22 @@
 #include "debug.h"
 #include "vargs.h"
 
+
+//定义一个location和va的structure
+typedef struct 
+{
+	va_list va;
+	int location;
+}result;
+
+
 //带颜色的内核打印函数
 void printf_color(real_color_t back,real_color_t fore,const char *foramt,...)
 {
 
 }
 
-//int根据不同进制字符串
+//int根据不同进制转字符串
 static int itoc(char *buff,int src,int radix,char word[],int location)
 {
 	//字符串原地逆序
@@ -65,42 +74,6 @@ static int itoc(char *buff,int src,int radix,char word[],int location)
 	return location;
 }
 
-//根据每一个%后的内容填入buff中
-static int content(char *buff,char type,int location,va_list va,unsigned char data_format,int word_width,int precision)
-{
-	char word[]="0123456789abcdef";
-	char *temp=NULL;
-	//--------------------------------根据输出参数判断是否需要格式化--------------------------------------
-
-	//--------------------------------根据输入参数的类型填入buff要输出的内容------------------------------
-	switch(type)
-	{
-		//输出类型是int型
-		case 'd':
-		location=itoc(buff,va_arg(va,int),10,word,location);
-		break;
-		//输出类型是十六进制
-		case 'x':
-		case 'X':
-		location=itoc(buff,va_arg(va,int),16,word,location);
-		break;
-		//输出类型是字符
-		case 'c':
-		buff[++location]=va_arg(va,int);
-		break;
-		//输出类型是字符串
-		case 's':
-		temp=va_arg(va,char *);
-		while(*temp!='\0')
-		{
-			buff[++location]=*temp;
-			temp++;
-		}
-		break;
-		default:break;
-	}
-	return location;
-}
 
 //输出每一个类型的数据
 //vsprintf只用于本文件内，所以定义为静态
@@ -127,6 +100,9 @@ static void vsprintf(char *buff,const char *format,va_list va)
 	unsigned char data_format=0;
 	//记录buff中最后的一个字符所在位置
 	int location=-1;
+	//字符串
+	char word[]="0123456789abcdef";
+	char *temp=NULL;
 	//中止的条件,是format字符串到达末尾
 	while(*format!='\0')
 	{
@@ -148,11 +124,37 @@ static void vsprintf(char *buff,const char *format,va_list va)
 			//---------------------------------------------输出格式部分判断------------------------------
 			//---------------------------------------------输出类型部分判断------------------------------
 			//格式化
-			location=content(buff,*format,location,va,data_format,word_width,precision);
-			//指向下一个字符
-			//#if PRINTF_MARCO==1
-				//printf("%c+++2\n",*format);
-			//#endif
+			switch(*format)
+			{
+				//整形
+				case 'd':
+				location=itoc(buff,va_arg(va,int),10,word,location);
+				break;
+				//二进制
+				case 'b':
+				case 'B':
+				location=itoc(buff,va_arg(va,int),2,word,location);
+				break;
+				//十六进制
+				case 'x':
+				case 'X':
+				location=itoc(buff,va_arg(va,int),16,word,location);
+				break;
+				//字符
+				case  'c':
+				buff[++location]=va_arg(va,int);
+				break;
+				//字符串
+				case 's':
+				temp=va_arg(va,char *);
+				while(*temp!='\0')
+				{
+					buff[++location]=*temp;
+					temp++;
+				}
+				break;
+				default:break;
+			}
 			format++;
 		}
 	}

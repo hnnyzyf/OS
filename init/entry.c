@@ -7,6 +7,7 @@
 //####################################################################
 #include "console.h"
 #include "debug.h"
+#include "multiboot.h"
 
 int kern_entry()
 {
@@ -16,5 +17,6 @@ int kern_entry()
 	printf("The function list is as followings:\n");
 	printf("1.print kernel stack!\n");
 	panic("this is a kernal stack information!\n");
+	get_multiboot_structure();
 	return 0;
 }

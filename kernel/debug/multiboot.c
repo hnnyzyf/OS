@@ -12,13 +12,14 @@ void get_multiboot_structure()
 	//获得头信心
 	mboot_header=*glb_mboot_ptr;
 	//输出flag的信息，查看定义了哪些内容
-	printf("flags:%x\n",mboot_header.flags);
+	printf("flags:%b\n",mboot_header.flags);
 	//判断定义了哪些位，然后根据位来输出结果
 	//判断flag[0]是否存在，存在则不为0
 	if(mboot_header.flags & 0x1)
 	{
 		printf("The flag 1 sectiion:\n");
 		printf("mem_lower:%d	mem_upper:%d\n",mboot_header.mem_lower,mboot_header.mem_upper);
+		printf("mem_lower:%d",mboot_header.mem_upper);
 	}
 	//判断flag[1]
 
