@@ -10,16 +10,19 @@
 
 
 #include "gdt.h"
-
+#include "types.h"
 
 //需要声明如下段描述符
 #define GDT_LENGTH 5
 
 //声明全局的GDTR
 gdt_t gdt[GDT_LENGTH];
+gdtr_t gdtr;
+
+
 
 //该函数用于设定一个描述符的状态
-static void set_gdt_status(gdt *gdt,uint32_t base,uint32_t limit,uint16_t info)
+static void set_gdt_status(gdt_t *gdt,uint32_t base,uint32_t limit,uint16_t info)
 {
 	//--------------------------设置base地址---------------------
 	//设置高8位地址
@@ -40,9 +43,8 @@ static void set_gdt_status(gdt *gdt,uint32_t base,uint32_t limit,uint16_t info)
 void init_gdt()
 {
 	//------------------------初始化段描述符GDTR的结构--------------------
-	gdtr_t gdtr;
 	//base存储的是GDT的基地址
-	gdtr.gdt_base=&gdt[0];
+	gdtr.gdt_base=(uint32_t)&gdt[0];
 	//limit为总字节数减1
 	gdtr.gdt_limit=sizeof(gdt_t)*GDT_LENGTH-1;
 	//------------------------初始化gdt的值-------------------------------
@@ -66,14 +68,17 @@ void init_gdt()
 	//				C:0,数据段全部用0
 	//				1:1
 	//代码段的额外信息描述符为1100,0000,1001,1010,即0xc09a;
-	set_gdt_status(&gdt[1],0,0xffffffff,0xc09a)//内核代码段
+	set_gdt_status(&gdt[1],0,0xffffffff,0xc09a);//内核代码段
 	//数据段的额外信息描述符为1100,0000,1001,0010.即0xc092;
-	set_gdt_status(&gdt[2],0,0xffffffff,0xc092)//内核数据段
+	set_gdt_status(&gdt[2],0,0xffffffff,0xc092);//内核数据段
 	//用户数据段描述符和代码段描述符
 	//base:0 limit:4GB DPL:3
 	//代码段的额外信息描述符为1100,0000,1111,1010
-	set_gdt_status(&gdt[3],0,0xffffffff,0xc0fa)//用户代码段
+	set_gdt_status(&gdt[3],0,0xffffffff,0xc0fa);//用户代码段
 	//数据段的额外信息描述符为1100,0000,1111,0010
-	set_gdt_status(&gdt[4],0,0xffffffff,0xc0f2)//用户数据段
+	set_gdt_status(&gdt[4],0,0xffffffff,0xc0f2);//用户数据段
+
+	//加载全局描述符表到GPDT寄存器
+	gdt_flush((uint32_t)&gdt[0]);
 }
 
