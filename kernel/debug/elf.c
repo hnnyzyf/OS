@@ -69,7 +69,7 @@ elf_t elf_from_multiboot(multiboot_t *src)
 		if(strcmp(name,".strtab")==0)
 		{
 			//section不为指针
-			printf("strtab:%x\n",section[i].sh_addr);
+			//printf("strtab:%x\n",section[i].sh_addr);
 			elf.strtab=(const char *)(section[i].sh_addr);
 			elf.strtabsize=section[i].sh_size;
 		}
@@ -77,7 +77,7 @@ elf_t elf_from_multiboot(multiboot_t *src)
 		if(strcmp(name,".symtab")==0)
 		{
 			//section不为指针
-			printf("symtab:%x\n",section[i].sh_addr);
+			//printf("symtab:%x\n",section[i].sh_addr);
 			elf.symtab=(elf_symbol_t *)(section[i].sh_addr);
 			elf.symtabsize=section[i].sh_size;
 		}

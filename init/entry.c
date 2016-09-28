@@ -8,10 +8,13 @@
 #include "console.h"
 #include "debug.h"
 #include "multiboot.h"
+#include "gdt.h"
 
 int kern_entry()
 {
 	console_clear();
+	init_gdt();
+	init_debug();
 	printf("Welcome to My OS!\n");
 	printf("This is only a demo\n");
 	printf("The function list is as followings:\n");

@@ -11,32 +11,38 @@
 
 #include "gdt.h"
 #include "types.h"
+#include "debug.h"
+
+#define debug 0
+
 
 //需要声明如下段描述符
 #define GDT_LENGTH 5
+
 
 //声明全局的GDTR
 gdt_t gdt[GDT_LENGTH];
 gdtr_t gdtr;
 
 
-
 //该函数用于设定一个描述符的状态
+//假设传入的时候，base已经设置为从低到高
 static void set_gdt_status(gdt_t *gdt,uint32_t base,uint32_t limit,uint16_t info)
 {
-	//--------------------------设置base地址---------------------
-	//设置高8位地址
-	gdt->base_high=(base>>24)& 0xff;
-	//设置低16位地址
+	//-----------------------设置base_address------------------
 	gdt->base_low=base& 0xffff;
-	//设置中间的8位地址
 	gdt->base_mid=(base>>16)& 0xff;
-	//--------------------------设置limit低16位地址----------------------
-	//设置低16位
-	gdt->limit_low=(limit& 0xffff);
-	//设置额外信息和limit高4位的地址
-	gdt->extra_info=info|(((limit>>8)& 0x0f00));
+	gdt->base_high=(base>>24)& 0xff;
+	//-----------------------设置limit----------------------
+	gdt->limit_low=limit& 0xffff;
+	//-----------------------设置extra_info-------------------
+	//采用的是liitle-edditen
+	gdt->extra_info=info|(((limit>>16)& 0x0f)<<8);
+#if debug==1
+	printf("%b\n",gdt->extra_info);
+#endif
 }
+
 
 //初始化gdt描述符
 //因为使用flag model，所以
@@ -77,8 +83,7 @@ void init_gdt()
 	set_gdt_status(&gdt[3],0,0xffffffff,0xc0fa);//用户代码段
 	//数据段的额外信息描述符为1100,0000,1111,0010
 	set_gdt_status(&gdt[4],0,0xffffffff,0xc0f2);//用户数据段
-
 	//加载全局描述符表到GPDT寄存器
-	gdt_flush((uint32_t)&gdt[0]);
+	gdt_flush((uint32_t)&gdtr);
 }
 

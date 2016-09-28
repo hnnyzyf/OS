@@ -13,7 +13,7 @@
 #include "multiboot.h"
 #include "elf.h"
 
-#define debug 1
+#define debug 0
 
 
 //定义全局静态变量
@@ -84,7 +84,6 @@ void panic(const char *msg)
 	//初始化elf文件信息
 	printf("----------step 1:initialization---------\n");
 	printf("  Begin to init the elf file information\n");
-	init_debug();
 	printf("The elf file has been init\n");
 	printf("------step 1:initialiazation end--------\n");
 	printf("----------step 2:kernel stack-----------\n");
