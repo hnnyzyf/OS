@@ -8,9 +8,9 @@
 
 [GLOBAL gdt_flush]
 gdt_flush:
-		;push ebp
-		;mov ebp,esp
-		mov eax,[esp+4]	;参数存入eax寄存器
+		push ebp
+		mov ebp,esp
+		mov eax,[esp+8]	;参数存入eax寄存器
 		lgdt [eax]			;加载到GDTR
 		
 		mov ax,0x10			;加载数据段描述符
@@ -22,6 +22,6 @@ gdt_flush:
 		jmp 0x08:.flush			;远程跳转，0x08是代码段描述符
 								;清空流水线并串行化处理器
 .flush:
-		;mov esp,ebp
-		;pop ebp
+		mov esp,ebp
+		pop ebp
 		ret
