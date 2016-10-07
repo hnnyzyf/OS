@@ -62,14 +62,14 @@ typedef struct
 	//------------由自己保存的寄存器的列表--------------
 	//通用寄存器
 	uint32_t eax;
-	uint32_t ebx;
 	uint32_t ecx;
 	uint32_t edx;
+	uint32_t ebx;
 	//栈寄存器
-	uint32_t ebp;
 	uint32_t esp;
-	uint32_t ebi;
+	uint32_t ebp;
 	uint32_t esi;
+	uint32_t edi;
 	//段寄存器
 	uint16_t ss;
 	uint16_t ds;
