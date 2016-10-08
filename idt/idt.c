@@ -53,14 +53,6 @@ void register_interrupt_handler(uint8_t num,interrupt_handler_t vector)
 
 
 
-
-
-
-
-
-
-
-
 //定义初始化中断描述符表
 void init_idt()
 {
