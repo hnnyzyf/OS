@@ -9,10 +9,7 @@
 
 [GLOBAL idt_flush]
 idt_flush:
-	push ebp
-	mov ebp,esp
-	mov eax,[esp+8]
+	mov eax,[esp+4]
 	lidt [eax]
-	mov esp,ebp
-	pop ebp
 	ret
+.end

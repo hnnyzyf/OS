@@ -58,38 +58,32 @@ extern void idt_flush(uint32_t);
 //在第三个阶段中需要保护的寄存器情况
 typedef struct
 {
-	uint8_t num;//记录是第几号中断函数
-	//------------由自己保存的寄存器的列表--------------
-	//通用寄存器
-	uint32_t eax;
-	uint32_t ecx;
-	uint32_t edx;
-	uint32_t ebx;
-	//栈寄存器
-	uint32_t esp;
-	uint32_t ebp;
-	uint32_t esi;
+	
+	uint32_t ds;//保存用户的数据段描述符
+	//------------------------1.pusha压入栈中的内容-------------------
 	uint32_t edi;
-	//段寄存器
-	uint16_t ss;
-	uint16_t ds;
-	uint16_t gs;
-	uint16_t fs;
-	//中断向量号
-	uint32_t idt_code;
+	uint32_t esi;
+	uint32_t ebp;
+	uint32_t esp;
+	uint32_t ebx;
+	uint32_t edx;
+	uint32_t ecx;
+	uint32_t eax;
+	//------------------------1.end-------------------------------
+	uint32_t idt_code;//自己压入的
 	//-----------由CPU自动保护的寄存器列表和信息列表--------
-	uint16_t user_ss;
-	uint32_t user_esp;
-	uint32_t eflags;
-	uint16_t cs;
-	uint32_t eip;
-	uint32_t error_code;//错误码
-}pt_reg_t;
+	uint32_t error_code;//错误代码
+	uint32_t eip;//下一条指令
+	uint32_t cs;//代码段
+	uint32_t eflags;//flag寄存器
+	uint32_t user_esp;//用户栈顶指针
+	uint32_t user_ss;//用户栈
+}reg_t;
 
 
 //定义一个中断处理函数指针
 //传入的参数是保护的所有寄存器的值
-typedef void (*interrupt_handler_t)(pt_reg_t *);
+typedef void (*interrupt_handler_t)(reg_t *);
 
 //注册一个中断处理函数
 //因为中断向量只有256个，所以使用uint8_t
@@ -98,7 +92,7 @@ void register_interrupt_handler(uint8_t num,interrupt_handler_t vector);
 
 
 //调用中断处理函数
-void isr_handler(pt_reg_t *regs);
+void isr_handler(reg_t *regs);
 
 //声明所有的中断处理函数，作为入口地址构建中断向量描述符，并传入中断向量表中
 //0~19号中断向量属于CPU的异常中断
@@ -137,5 +131,6 @@ void isr29();
 void isr30();
 void isr31();
 
-
+//255
+void isr255();
 #endif
