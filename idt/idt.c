@@ -27,6 +27,7 @@ idtr_t idtr;
 //定义全局的中断处理函数数组
 interrupt_handler_t handler[IDT_LENGTH];
 
+
 //定义中断描述符表函数
 static void set_idt_status(idt_t *idt,uint32_t offset,uint16_t seg_selector,uint16_t extra_info)
 {
@@ -35,6 +36,7 @@ static void set_idt_status(idt_t *idt,uint32_t offset,uint16_t seg_selector,uint
 	idt->seg_selector=seg_selector;
 	idt->extra_info=extra_info;
 #if debug==1
+	printf("%x:%x:%x:%x\n",idt->offset_low,idt->offset_high,idt->extra_info);
 #endif
 }
 
@@ -124,7 +126,7 @@ void init_idt()
 	set_idt_status(&idt[30],(uint32_t)isr30,0x08,0x8e00);
 	set_idt_status(&idt[31],(uint32_t)isr31,0x08,0x8e00);
 	//设置操作系统自定义中断描述符
-	set_idt_status(&idt[255],(uint32_t)&isr255,0x08,0x8e00);
+	set_idt_status(&idt[255],(uint32_t)isr255,0x08,0x8e00);
 	
 	//-------------加载中断描述符表寄存器-----------------
 	idt_flush((uint32_t)&idtr);

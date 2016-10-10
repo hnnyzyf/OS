@@ -68,7 +68,7 @@ ISR_NOERRORCODE 255
 
 
 ;定义中断服务程序
-[GLOBAL isr_common_pub]
+[GLOBAL isr_common_stub]
 ;声明调用外部的具体中断处理函数
 [EXTERN isr_handler]
 ;中断服务程序
@@ -99,4 +99,4 @@ isr_common_stub:
 	add esp,8			;清理栈里的error code和isr
 	iret
 
-.end
+.end:
