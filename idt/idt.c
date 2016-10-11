@@ -79,7 +79,7 @@ void init_idt()
 	//因为不确定用哪些
 	memset(&idt,0,sizeof(idt_t)*256);
 	//初始化全局的中断处理函数数组
-	memset(&handler,0,sizeof(handler)*256);
+	memset(&handler,0,sizeof(interrupt_handler_t)*256);
 	//首先设置中断描述符表寄存器
 	idtr.limit=sizeof(idt_t)*IDT_LENGTH-1;
 	idtr.base=(uint32_t)&idt[0];
