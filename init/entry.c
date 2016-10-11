@@ -24,6 +24,6 @@ int kern_entry()
 	printf("3.print IDT setting!\n");
 	//panic("this is a kernal stack information!\n");
 	//get_multiboot_structure();
-	asm volatile("int $0x4");
+	//asm volatile("int $0x4");
 	return 0;
 }

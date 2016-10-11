@@ -11,7 +11,7 @@
 #include "idt.h"
 #include "debug.h"
 #include "string.h"
-
+#include "common.h"
 
 #define debug 0
 
@@ -69,11 +69,17 @@ void isr_handler(reg_t *regs)
 	}
 }
 
+//----------------------------8259A PIC初始化---------------------
+void init_irq()
+{
 
+}
 
 //定义初始化中断描述符表
 void init_idt()
 {
+	//8259A初始化
+	init_irq();
 	//-------------初始化中断描述符表数组和中断处理函数数组--------
 	//初始化中断描述符表,全部置为0
 	//因为不确定用哪些
