@@ -12,13 +12,14 @@
 #include "types.h"
 #include "common.h"
 
-
+#define debug 1
 
 static uint32_t tick=0;
 
 //声明中断处理函数
 void timer_callback(reg_t* regs)
 {
+#if debug==1
 	//判断中断次数是否正常
 	if(tick<0xffffffff)
 	{
@@ -29,6 +30,15 @@ void timer_callback(reg_t* regs)
 		printf("Tick:%d\n",tick);
 		tick=0;
 	}
+#endif
+	if(tick<0xffffffff)
+	{
+		tick++;
+	}
+	else
+	{
+		tick=0;
+	}
 }
 
 
@@ -37,7 +47,6 @@ void init_timer(uint32_t frequency)
 {
 	//首先注册中断处理函数
 	register_interrupt_handler(IRQ0,timer_callback);
-
 	//----------------------设置芯片
 	//端口处理范围是040h～043h
 	//输入的频率为1193180   frequency为每秒中断的次数

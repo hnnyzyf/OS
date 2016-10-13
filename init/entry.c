@@ -26,6 +26,7 @@ int kern_entry()
 	init_debug();
 	init_idt();
 	init_timer(60);
-	//asm volatile("int $0x4");
+	asm volatile("sti");
+	asm volatile("int $0x22");
 	return 0;
 }

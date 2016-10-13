@@ -55,7 +55,7 @@ irq_common_stub:
 	mov fs,ax
 	
 	push esp
-	call irq_common_stub
+	call irq_handler
 
 	add esp,4
 
