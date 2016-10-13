@@ -84,7 +84,7 @@ isr_common_stub:
 	mov gs,ax
 	mov ss,ax
 
-	push esp;			;此时的esp的寄存器值等价于regs_t结构体的指针
+	push esp			;此时的esp的寄存器值等价于regs_t结构体的指针
 	call isr_handler	;调用具体的中断处理函数
 	add esp,4			;清除压入的参数
 
