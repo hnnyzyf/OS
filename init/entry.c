@@ -11,6 +11,7 @@
 #include "gdt.h"
 #include "idt.h"
 #include "timer.h"
+#include "pmm.h"
 int kern_entry()
 {
 	console_clear();
@@ -27,6 +28,7 @@ int kern_entry()
 	init_idt();
 	init_timer(60);
 	asm volatile("sti");
-	asm volatile("int $0x22");
+	show_memory_map();
+	//get_multiboot_structure();
 	return 0;
 }

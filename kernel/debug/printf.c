@@ -10,7 +10,7 @@
 #include "console.h"
 #include "debug.h"
 #include "vargs.h"
-
+#include "types.h"
 
 //定义一个location和va的structure
 typedef struct 
@@ -138,7 +138,7 @@ static void vsprintf(char *buff,const char *format,va_list va)
 				//十六进制
 				case 'x':
 				case 'X':
-				location=itoc(buff,va_arg(va,int),16,word,location);
+				location=itoc(buff,va_arg(va,uint32_t),16,word,location);
 				break;
 				//字符
 				case  'c':

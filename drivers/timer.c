@@ -12,7 +12,7 @@
 #include "types.h"
 #include "common.h"
 
-#define debug 1
+#define debug 0
 
 static uint32_t tick=0;
 

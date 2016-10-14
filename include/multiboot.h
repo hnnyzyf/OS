@@ -73,6 +73,4 @@ typedef struct mmap_t
 //定义全局的multiboot的指针头
 extern multiboot_t* glb_mboot_ptr;
 
-
-
 #endif
