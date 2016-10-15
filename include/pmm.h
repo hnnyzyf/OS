@@ -12,9 +12,16 @@
 #include "types.h"
 #include "multiboot.h"
 
+
+//内核文件在内存中的起始和结束位置
+//在连接器脚本中要求连接器定义
+extern uint8_t kern_start[];
+extern uint8_t kern_end[];
+
+
 //定义获取操作系统内存
 void show_memory_map();
 
-
+void show_kernel_map();
 
 #endif

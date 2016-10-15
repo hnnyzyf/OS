@@ -29,3 +29,27 @@ void show_memory_map()
 	}
 
 }
+
+
+//显示内核文件的位置信息
+void show_kernel_map()
+{
+	printf("Kernel Memory Map:\n");
+	printf("kernel in memory start:%x\n",kern_start);
+	printf("kernel in memory stop:%x\n",kern_end);
+	printf("kernel in memory used:%dKB\n",(kern_end-kern_start+1023)/1024);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

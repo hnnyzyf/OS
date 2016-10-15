@@ -22,6 +22,7 @@ int kern_entry()
 	printf("2.print GDT setting!\n");
 	printf("3.print IDT setting!\n");
 	printf("4.print Clock setting!\n");
+	printf("5.Memory Management!\n");
 	//panic("this is a kernal stack information!\n");
 	init_gdt();
 	init_debug();
@@ -29,6 +30,7 @@ int kern_entry()
 	init_timer(60);
 	asm volatile("sti");
 	show_memory_map();
+	show_kernel_map();
 	//get_multiboot_structure();
 	return 0;
 }

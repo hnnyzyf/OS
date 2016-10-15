@@ -27,7 +27,7 @@ void printf_color(real_color_t back,real_color_t fore,const char *foramt,...)
 }
 
 //int根据不同进制转字符串
-static int itoc(char *buff,int src,int radix,char word[],int location)
+static int itoc(char *buff,uint32_t src,int radix,char word[],int location)
 {
 	//字符串原地逆序
 	int start=location+1;
@@ -38,11 +38,6 @@ static int itoc(char *buff,int src,int radix,char word[],int location)
 		buff[++location]='-';
 		src=0-src;
 		start++;
-	}
-	else if(src==0)
-	{
-		buff[++location]='0';
-		return location;
 	}
 	else
 	{
@@ -55,6 +50,10 @@ static int itoc(char *buff,int src,int radix,char word[],int location)
 		buff[++location]='X';
 		start=start+2;
 	}
+	else
+	{
+		buff[++location]=0;
+	}
 	//记录起始位置
 	while(src!=0)
 	{
@@ -63,6 +62,14 @@ static int itoc(char *buff,int src,int radix,char word[],int location)
 		src=src/radix;
 	}
 	//原地逆序
+	//如果是十六进制
+	if(radix==16)
+	{
+		while(location-start+1<8)
+		{
+			buff[++location]='0';
+		}
+	}
 	end=location;
 	//中止条件是start=end或者start>end
 	while(start<end)
