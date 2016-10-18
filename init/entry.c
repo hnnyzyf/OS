@@ -29,6 +29,10 @@ int kern_entry()
 	init_idt();
 	init_timer(60);
 	asm volatile("sti");
+	init_pmm();
+	uint32_t page=pmm_alloc_page();
+	printf("the page address is %x\n",page);
+	pmm_free_page(page);
 	show_memory_map();
 	show_kernel_map();
 	//get_multiboot_structure();

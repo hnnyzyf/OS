@@ -13,15 +13,7 @@
 
 //定义assert宏
 //该断言在判断x为'0',空指针等，会调用panic函数
-#define assert(x,info)				\
-		do							\
-		{						    \
-			if(!(x))				\
-					{				\
-					panic(info)		\
-					}				\
-		}							\
-		while(0)
+#define assert(x,info) do{if(!(x)){panic(info);}}while(0)
 
 //编译期间静态检测
 //#define static_assert(x) switch(x)(case 0: case(x):;)

@@ -29,10 +29,11 @@ void show_kernel_map();
 //线程栈大小
 #define STACK_SIZE 8192
 
-//支持的最大物理内存
+
+//支持的最大物理内存(512M)
 #define PMM_MAX_SIZE 0x20000000
 
-//物理内存页框大小
+//物理内存页框大小(4KB)
 #define PMM_PAGE_SIZE 0x1000
 
 //最多支持的物理页面个数
@@ -41,8 +42,8 @@ void show_kernel_map();
 //页掩码按照4096对齐
 #define PHY_PAGE_MASK 0xfffff000
 
-//动态分配物理内存也的总数
-extern uint32_t phy_page_count
+//动态分配物理内存的总数
+extern uint32_t phy_page_count;
 
 //初始化物理内存管理
 void init_pmm();
@@ -51,5 +52,5 @@ void init_pmm();
 uint32_t pmm_alloc_page();
 
 //释放申请的内存
-void pmm_free_page(uint32_t p);
+void pmm_free_page(uint32_t page);
 #endif
