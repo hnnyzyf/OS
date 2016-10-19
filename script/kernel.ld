@@ -10,31 +10,43 @@
 ENTRY(start)
 SECTIONS
 {
+	PROVIDE( kern_start= 0xc0100000 )
 	/*段起始位置*/
 	. =  0x100000;
-	PROVIDE( kern_start =. );
-	.text :
+	/*新添加的初始化段*/
+	.init.text :
+	{
+		*(.init.text)
+		. =ALIGN(4096);
+	}
+	.init.data :
+	{
+		*(.init.data)
+		. =ALIGN(4096);
+	}
+	. += 0xc0000000
+	.text : AT(ADDR(.text)- 0xc0000000)
 	{
 		*(.text)
-			. = ALIGN(4096);
+		. = ALIGN(4096);
 	}
-	.data :
+	.data : AT(ADDR(.text)- 0xc0000000)
 	{
 		*(.data)
 		*(.rodata )
 		. = ALIGN(4096);
 	}
-	.bss :
+	.bss : AT(ADDR(.text)- 0xc0000000)
 	{
 		*(.bss)
 		. = ALIGN(4096);
 	}
-	.stab :
+	.stab : AT(ADDR(.text)- 0xc0000000) 
 	{
 		*( .stab )
 			. = ALIGN(4096);
 	}
-	.stabstr :
+	.stabstr : AT(ADDR(.text)- 0xc0000000)
 	{
 		*(.stabstr )
 			. = ALIGN(4096);
