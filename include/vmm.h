@@ -56,13 +56,14 @@
 #define OFFSET_INDEX(x)	(x& 0xfff) 
 
 //--------------定义数据结构-------------------------
-//页目录的数据结构
-typedef uint32_t pgd_t;
+//页目录表的表项数据结构
+typedef uint32_t pde_t;
 
-//页表的数据结构
+//页表的表项数据结构
 typedef uint32_t pte_t;
 
 //页目录项的数量
+//存储的是
 #define PGD_SIZE (VIRTUAL_PAGE_SIZE/sizeof(pte_t))
 
 //页表成员数量
@@ -72,23 +73,23 @@ typedef uint32_t pte_t;
 #define PTE_COUNT (512/4)
 
 //内核页目录区域
-extern pgd_t pgd_kern[PGD_SIZE]'
+extern pde_t pde_kern[PDE_SIZE];
 
 //初始化虚拟内存管理
 void init_vmm();
 
 //更换当前的页目录
-void switch_pgd(uint32_t pd);
+void switch_pde(uint32_t pde);
 
 //使用flags指出页权限，将物理地址pa映射到虚拟的值va
-void map(pgd_t *pgd_now,uint32_t va,uint32_t pa,uint32_t flags);
+void map(pde_t *pde_now,uint32_t va,uint32_t pa,uint32_t flags);
 
 //取消虚拟地址对物理地址的映射
-void unmap(pgd_t *pgd_now,uint32_t va);
+void unmap(pde_t *pde_now,uint32_t va);
 
 //如果虚拟地址va映射到物理地址返回1
 //同时如果pa不是空指针则把物理地址写入到pa参数
-uint32_t get_mapping(pgd_t *pgd_now,uint32_t va,uint32_t *pa);
+uint32_t get_mapping(pde_t *pde_now,uint32_t va,uint32_t *pa);
 
 //页错误中断函数处理
 void page_fault(reg_t *regs);
