@@ -12,7 +12,6 @@
 
 #include "types.h"
 #include "idt.h"
-#include "vmm.h"
 
 //内核偏移地址
 //仿照linux，将内核的地址映射到3G以上
@@ -57,9 +56,12 @@
 
 //--------------定义数据结构-------------------------
 //页目录表的表项数据结构
-typedef uint32_t pde_t;
+//因为所有的页均是4kb对齐，所以后12位均为0
+//前20位记录所有的页表的地址
+typedef uint32_t pgd_t;
 
 //页表的表项数据结构
+//每一项记录一个物理地址
 typedef uint32_t pte_t;
 
 //页目录项的数量
@@ -73,23 +75,23 @@ typedef uint32_t pte_t;
 #define PTE_COUNT (512/4)
 
 //内核页目录区域
-extern pde_t pde_kern[PDE_SIZE];
+extern pgd_t pgd_kern[PDE_SIZE];
 
 //初始化虚拟内存管理
 void init_vmm();
 
 //更换当前的页目录
-void switch_pde(uint32_t pde);
+void switch_pgd(uint32_t pgd);
 
 //使用flags指出页权限，将物理地址pa映射到虚拟的值va
-void map(pde_t *pde_now,uint32_t va,uint32_t pa,uint32_t flags);
+void map(pgd_t *pgd_now,uint32_t va,uint32_t pa,uint32_t flags);
 
 //取消虚拟地址对物理地址的映射
-void unmap(pde_t *pde_now,uint32_t va);
+void unmap(pgd_t *pgd_now,uint32_t va);
 
 //如果虚拟地址va映射到物理地址返回1
 //同时如果pa不是空指针则把物理地址写入到pa参数
-uint32_t get_mapping(pde_t *pde_now,uint32_t va,uint32_t *pa);
+uint32_t get_mapping(pgd_t *pgd_now,uint32_t va,uint32_t *pa);
 
 //页错误中断函数处理
 void page_fault(reg_t *regs);
