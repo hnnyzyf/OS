@@ -11,3 +11,80 @@
 #include "vmm.h"
 #include "debug.h"
 #include "idt.h"
+
+
+//-------------------------------虚拟页管理数据结构--------------------------------
+//内核进程页目录项表数据结构
+//成员是pgd_t页目录项
+//长度是一页存储的页目录项个数 4kb/4b=1024
+pgd_t pgd_kern[PGD_SIZE] __attribute__((aligned(PAGE_SIZE)));
+
+//内核页表项数据结构，为二维数组
+//一维代表的是页表的数量,最多映射512M内存
+//二维代表的是页表内页框的个数
+//成员是页框的物理地址
+//长度是一页存储的页框物理地址个数 4kb/4b=1024
+//使用静态类型，只在本文件内有效
+static pte_t pte_kern[PTE_COUNT][PTE_SIZE] __attribute__((aligned(PAGE_SIZE)));
+
+//------------------------------虚拟页管理函数-----------------------------------
+
+//初始化虚拟内存管理
+//初始化内核页表即可，因为现在只有内核地址被分配了
+//在临时页表中,已经将前4M的内存映射到0xc000,0000这个地址以上，所以当前.text和.data
+//段的地址都为0xc000,0000以上的地址
+//页目录项和页表存储的地址均为物理地址
+void init_vmm()
+{
+	//---------------------需要重新设置页目录项-------------------
+	//因为内核页表只使用了0xc000,0000地址以上的内容，只需设置这个地址以上的内容即可
+	uint32_t i;
+	for(i=0;i<PTE_COUNT;i++)
+	{
+		//将页表项指向页目录地址
+		//页目录应该为物理地址
+		pgd_kern[PGD_INDEX(PAGE_OFFSET)+VIRTUAL_PAGE_SIZE*i]=(pgd_t)(pte_lern[i]-PAGE_OFFSET)|PAGE_PRESENT|PAGE_WRITE;
+	}
+	//---------------------需要重新设置页表---------------------
+	//页表需要指向物理地址
+	uint32_t j;
+	for(i=0;i<PTE_COUNT;i++)
+	{
+		for(j=0;j<PTE_SIZE;j++)
+		{
+			//i是页表的基址 i<<12获得页表指向的基址
+			//12是以4M为单位，因为一个页表涵盖4M
+			//j是页框的基址
+			pte_kern[i][j]=(i<<12)+j*VIRTUAL_PAGE_SIZE;
+		}
+	}
+	//---------------------注册14号页故障重中断----------------
+	rehoster_interrupt_handler(IRQ14,page_fault);
+	//--------------------更新Cr3寄存器-------------------------
+	uint32_t kern_stack_phy_address=(uint32_t)pgd_kern-PAGE_OFFSET;
+	switch_pgd(kern_stack_phy_address);
+}
+
+
+//更换页目录
+void switch_pgd(uint32_t pgd_phy_addr)
+{
+	asm volatile
+	(
+		"movl %0,%%cr3"
+		:
+		:"r"(pgd_phy_addr)
+	);
+}
+
+//------------------------虚拟内存管理-------------------------------
+//指出页权限,将物理页加入到虚拟地址映射中去
+void map(pgd_t *pgd_now,uint32_t virtual_addr,uint32_t physical_addr,uint32_t flags)
+{
+	//获得线性地址的页目录项索引和页表索引
+	uint32_t pgd_index=PGD_INDEX(virtual_addr);
+	uint32_t pte_index=PTE_INDEX(virtual_addr);
+
+	//开始映射
+	//先判断是否存在对应的映射
+}

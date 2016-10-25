@@ -134,7 +134,7 @@ __attribute__((section(".init.text"))) void kern_entry()
 	asm volatile
 		(
 			"movl %%cr0,%0"
-			:"=a"(cr0)
+			:"=r"(cr0)
 			:
 		);
 	cr0=cr0|0x8000;
@@ -149,5 +149,18 @@ __attribute__((section(".init.text"))) void kern_entry()
 	//设置全局的multiboot指针
 	glb_mboot_ptr=mboot_ptr_tmp+PAGE_OFFSET;
 	//----------------开始切换新的内核栈-------------------
+	//新的内核栈，需要修改的是栈顶指针esp的位置
+	//首先确定esp的地址，需要4KB对齐
+	uint32_t kern_stack_top=(uint32_t)((kern_stack+STACK_SIZE)+VIRTUAL_PAGE_MASK-1)&VIRTUAL_PAGE_MASK;
+	//需要修改ebp和esp
+	asm volatile
+		(
+			"movl %0,%%esp"
+			"xor %%ebp,%%ebp"
+			:
+			:"r"(kern_stack_top)
+		);
+	//--------------跳转到内核处理模块-------------------
+	init_kern();
 	
 }

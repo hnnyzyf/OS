@@ -69,6 +69,8 @@ typedef struct mmap_t
 	uint32_t type;
 }__attribute__((packed)) mmap_t;
 
+//定义临时的群居multiboot的指针
+extern multiboot_t * mboot_ptr_temp;
 
 //定义全局的multiboot的指针头
 extern multiboot_t* glb_mboot_ptr;

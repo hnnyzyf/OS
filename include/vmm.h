@@ -81,10 +81,10 @@ extern pgd_t pgd_kern[PDE_SIZE];
 void init_vmm();
 
 //更换当前的页目录
-void switch_pgd(uint32_t pgd);
+void switch_pgd(uint32_t pgd_phy_addr);
 
 //使用flags指出页权限，将物理地址pa映射到虚拟的值va
-void map(pgd_t *pgd_now,uint32_t va,uint32_t pa,uint32_t flags);
+void map(pgd_t *pgd_now,uint32_t virtual_addr,uint32_t physical_addr,uint32_t flags);
 
 //取消虚拟地址对物理地址的映射
 void unmap(pgd_t *pgd_now,uint32_t va);

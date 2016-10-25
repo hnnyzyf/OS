@@ -10,6 +10,7 @@
 #include "elf.h"
 #include "multiboot.h"
 #include "debug.h"
+#include "vmm.h"
 
 #define debug 0
 
@@ -58,7 +59,7 @@ elf_t elf_from_multiboot(multiboot_t *src)
 		//
 		//指向字符串表中第section[i].sh_name个字符串,因为sg_addr是整数类型，所以加sh_name就是偏移sh_name的字节数
 		//转化为字符串指针
-		const char *name=(const char *)(sh_addr+section[i].sh_name);
+		const char *name=(const char *)(sh_addr+section[i].sh_name)+PAGE_OFFSET;
 #if (debug==1)
 		printf("%d:",i);
 		printf(":name:%x:%s:",name,name);
@@ -70,7 +71,7 @@ elf_t elf_from_multiboot(multiboot_t *src)
 		{
 			//section不为指针
 			//printf("strtab:%x\n",section[i].sh_addr);
-			elf.strtab=(const char *)(section[i].sh_addr);
+			elf.strtab=(const char *)(section[i].sh_addr)+PAGE_OFFSET;
 			elf.strtabsize=section[i].sh_size;
 		}
 		//判断是否是符号表
@@ -78,7 +79,7 @@ elf_t elf_from_multiboot(multiboot_t *src)
 		{
 			//section不为指针
 			//printf("symtab:%x\n",section[i].sh_addr);
-			elf.symtab=(elf_symbol_t *)(section[i].sh_addr);
+			elf.symtab=(elf_symbol_t *)(section[i].sh_addr)+PAGE_OFFSET;
 			elf.symtabsize=section[i].sh_size;
 		}
 	}
