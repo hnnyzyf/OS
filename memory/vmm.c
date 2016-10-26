@@ -58,8 +58,8 @@ void init_vmm()
 			pte_kern[i][j]=(i<<12)+j*VIRTUAL_PAGE_SIZE;
 		}
 	}
-	//---------------------注册14号页故障重中断----------------
-	rehoster_interrupt_handler(IRQ14,page_fault);
+	//---------------------注册14号页故障中断----------------
+	register_interrupt_handler(IRQ14,page_fault);
 	//--------------------更新Cr3寄存器-------------------------
 	uint32_t kern_stack_phy_address=(uint32_t)pgd_kern-PAGE_OFFSET;
 	switch_pgd(kern_stack_phy_address);
@@ -79,12 +79,84 @@ void switch_pgd(uint32_t pgd_phy_addr)
 
 //------------------------虚拟内存管理-------------------------------
 //指出页权限,将物理页加入到虚拟地址映射中去
+//传入的参数是虚拟地址，但是需要的是物理地址
 void map(pgd_t *pgd_now,uint32_t virtual_addr,uint32_t physical_addr,uint32_t flags)
 {
 	//获得线性地址的页目录项索引和页表索引
 	uint32_t pgd_index=PGD_INDEX(virtual_addr);
 	uint32_t pte_index=PTE_INDEX(virtual_addr);
 
-	//开始映射
-	//先判断是否存在对应的映射
+	//先判断是否已经在页表中映射了物理内存
+	//获得页目录项，页目录项中存储的是物理地址
+	pgd_t *pgd_temp=(pgd_t *)pgd_now[pgd_index];
+	//声明页表，访问页表需要访问虚拟地址
+	pte_t *pte_temp;
+	//1.判断页目录项是否已经指向了一个页表，如果没有，则需要申请一个物理页
+	if(!pgd_temp)
+	{
+		//获得一个物理页，且插入页目录项的物理地址
+		pgd_temp=(pgd_t *)pmm_alloc_page();
+		pgd_now[pgd_index]=(uint32_t)pgd_temp|PAGE_PRESENT|PAGE_WRITE;
+		//获得页表的虚拟的地址(线性地址)
+
+	}
+	//2.如果已经存在该页目录项，则去该目录对应的页表查询是否存在对应的物理页
+	pte_temp=(pte_t *)(pgd_now[pgd_index]+PAGE_OFFSET);
+	//3.将物理页插入到对应的页表项中以完成映射
+	pte[pte_index]=(uint32_t)physical_addr|flags;
+
+	//4.通知cpu更新页缓存
+	asm volatile("invlpg(%0)"::"a"(virtual_addr));
 }
+
+//取消映射
+void unmap(pgd_t *pgd_now,uint32_t virtual_addr)
+{
+	//获得虚拟(线性)地址的页目录项索引和页表索引
+	uint32_t pgd_index=PGD_INDEX(virtual_addr);
+	uint32_t pte_index=PTE_INDEX(virtual_addr);
+	//先判断是否已经确实存在映射关系
+	pgd_t * pgd_temp=(pgd_t *)pgd_now[pgd_index];
+	pte_t * pte_temp=(pte_t *)((uint32_t)pgd_temp+PAGE_OFFSET);
+	//如果不存在物理映射，跳出
+	assert((!pgd_temp || !pte_temp[pte_index]),"DO not exsits mapping!");
+	//存在物理映射
+	//1.回收物理页
+	pmm_free_page((uint32_t)pte_temp[pte_index]);
+	//2.取消页表对物理页的映射,s设为0即可
+	pte_temp[pte_index]=0;
+	//3.更新缓存
+	asm volatile("invlpg(%0)"::"a"(virtual_addr));
+}
+
+//判断映射是否存在
+uint32_t get_mapping(pgd_t *pgd_now,uint32_t virtual_addr,uint32_t *physical_addr)
+{
+	//获得虚拟(线性)地址的页目录项索引和页表索引
+	uint32_t pgd_index=PGD_INDEX(virtual_addr);
+	uint32_t pte_index=PTE_INDEX(virtual_addr);
+
+	//判断映射关系是是否存在
+	pgd_t *pgd_temp=(pgd_t*)pgd_now[pgd_index];
+	if(!pgd_t)
+	{
+		return 0;
+	}
+	pte_t *pte_temp=(pte_t *)((uint32_t)pgd_temp+PAGE_OFFSET);
+	if(!pte_temp[pte_index])
+	{
+		return 0;
+	}
+	//获得虚拟地址所指向的物理地址
+	uint32_t *address=(uint32_t *)((uint32_t)pte_temp[pte_index]+OFFSET_INDEX(virtual_addr));
+	//判断是否正确
+	if((uint32_t)address=(uint32_t)physical_addr &&physical_addr!=NULL)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+

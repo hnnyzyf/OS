@@ -87,7 +87,7 @@ void switch_pgd(uint32_t pgd_phy_addr);
 void map(pgd_t *pgd_now,uint32_t virtual_addr,uint32_t physical_addr,uint32_t flags);
 
 //取消虚拟地址对物理地址的映射
-void unmap(pgd_t *pgd_now,uint32_t va);
+void unmap(pgd_t *pgd_now,uint32_t virtual_addr);
 
 //如果虚拟地址va映射到物理地址返回1
 //同时如果pa不是空指针则把物理地址写入到pa参数
