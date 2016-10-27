@@ -225,7 +225,7 @@ void console_write_dec(uint32_t n,real_color_t back,real_color_t fore)
 		//缩小十倍
 		temp=temp/10;
 	}
-	for(i;i<32;i++)
+	for(i=0;i<32;i++)
 	{
 		console_putc_color(str[i]+'0',back,fore);
 	}

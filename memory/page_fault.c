@@ -16,5 +16,5 @@
 
 void page_fault(reg_t *regs)
 {
-	while(1);
+	printf("Page　Fault!\n");
 }

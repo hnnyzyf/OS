@@ -69,13 +69,13 @@ typedef uint32_t pte_t;
 #define PGD_SIZE (VIRTUAL_PAGE_SIZE/sizeof(pte_t))
 
 //页表成员数量
-#define PTE_SIZE (VIRTUAL_PAGE_size/sizeof(uint32_t))
+#define PTE_SIZE (VIRTUAL_PAGE_SIZE/sizeof(uint32_t))
 
 //映射512M内存所需要的页表数
 #define PTE_COUNT (512/4)
 
 //内核页目录区域
-extern pgd_t pgd_kern[PDE_SIZE];
+extern pgd_t pgd_kern[PGD_SIZE];
 
 //初始化虚拟内存管理
 void init_vmm();

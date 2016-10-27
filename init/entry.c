@@ -33,6 +33,8 @@ void init_kern()
 	printf("3.print IDT setting!\n");
 	printf("4.print Clock setting!\n");
 	printf("5.Memory Management!\n");
+	
+	/*
 #if debug==1	
 	panic("this is a kernal stack information!\n");
 #endif
@@ -53,10 +55,14 @@ void init_kern()
 	pmm_free_page(page);
 	show_memory_map();
 	show_kernel_map();
+#endif
 #if debug==3
 	get_multiboot_structure();
 #endif 
 	//此处需要中止，调用htl,防止跳出程序
+	//初始化虚拟内存管理模块
+	init_vmm();
+	*/
 	while(0)
 	{
 		asm volatile("htl");
@@ -76,6 +82,7 @@ void init_kern()
 
 //全局的multiboot头声明，其他文件使用需要使用extern关键字
 multiboot_t * glb_mboot_ptr;
+extern multiboot_t *mboot_ptr_tmp;
 //开启分页机制后的内核栈
 //栈大小在pmm.h中声明
 uint8_t kern_stack[STACK_SIZE];
@@ -155,8 +162,8 @@ __attribute__((section(".init.text"))) void kern_entry()
 	//需要修改ebp和esp
 	asm volatile
 		(
-			"movl %0,%%esp"
-			"xor %%ebp,%%ebp"
+			"movl %0,%%esp\n"
+			"xor %%ebp,%%ebp\n"
 			:
 			:"r"(kern_stack_top)
 		);

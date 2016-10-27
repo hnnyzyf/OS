@@ -99,9 +99,9 @@ bochs:
 
 .PHONY:debug
 debug:
-	qemu -S -s -fda floppy.img -boot a &
+	qemu -S -s -fda floppy.img -boot a -curses &
 	sleep 1 
-	gdb -x script/gdbinit
+	gdb -x script/gdbinitaaa
 	
 	
 
