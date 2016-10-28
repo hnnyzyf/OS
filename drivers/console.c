@@ -14,7 +14,7 @@
 
 //因为已经开启分页，所以地址应为虚拟地址
 //0xB8000地址应该位于1M内存以下，故也被映射到0xc0000000以上
-static uint16_t *video_memory=(uint16_t *)0xB8000+PAGE_OFFSET;
+static uint16_t *video_memory=(uint16_t *)(0xB8000+PAGE_OFFSET);
 
 //屏幕光标的坐标
 static uint8_t cursor_x=0;

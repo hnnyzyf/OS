@@ -24,7 +24,7 @@
 //初始化虚拟内存管理VMM，开启分页管理模式
 void init_kern()
 {
-	console_clear();
+	//console_clear();
     printf("Welcome to My OS!\n");
 	printf("This is only a demo\n");
 	printf("The function list is as followings:\n");
@@ -154,7 +154,7 @@ __attribute__((section(".init.text"))) void kern_entry()
 	//----------------从此处开始寻址变为分页------------------
 	//开始启用新的地址
 	//设置全局的multiboot指针
-	glb_mboot_ptr=mboot_ptr_tmp+PAGE_OFFSET;
+	glb_mboot_ptr=(multiboot_t *)((uint32_t)mboot_ptr_tmp+PAGE_OFFSET);
 	//----------------开始切换新的内核栈-------------------
 	//新的内核栈，需要修改的是栈顶指针esp的位置
 	//首先确定esp的地址，需要4KB对齐

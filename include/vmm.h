@@ -43,7 +43,7 @@
 #define VIRTUAL_PAGE_SIZE 0x1000
 
 //虚拟页掩码，用来4K对齐
-#define VIRTUAL_PAGE_MASK 0xfffff000
+#define VIRTUAL_PAGE_MASK 0xffffc000
 
 //获取一个地址的页目录项
 #define PGD_INDEX(x) ((x>>22)& 0xfff)

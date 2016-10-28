@@ -40,7 +40,7 @@ void show_kernel_map();
 #define PAGE_MAX_SIZE (PMM_MAX_SIZE/PMM_PAGE_SIZE)
 
 //页掩码按照4096对齐
-#define PHY_PAGE_MASK 0xfffff000
+#define PHY_PAGE_MASK 0xffffc000
 
 //动态分配物理内存的总数
 extern uint32_t phy_page_count;
