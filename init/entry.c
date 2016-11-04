@@ -24,7 +24,14 @@
 //初始化虚拟内存管理VMM，开启分页管理模式
 void init_kern()
 {
-	//console_clear();
+	/*
+    //初始化段式管理
+	init_gdt();
+	init_debug();
+	//初始化中断
+	init_idt();	
+	console_clear();
+	*/
     printf("Welcome to My OS!\n");
 	printf("This is only a demo\n");
 	printf("The function list is as followings:\n");
@@ -38,11 +45,6 @@ void init_kern()
 #if debug==1	
 	panic("this is a kernal stack information!\n");
 #endif
-	//初始化段式管理
-	init_gdt();
-	init_debug();
-	//初始化中断
-	init_idt();
 	//初始化可编程中断，初始化时钟
 	init_timer(60);
 	//因为初始化过程中关闭了中断，需要开中断
@@ -85,7 +87,11 @@ multiboot_t * glb_mboot_ptr;
 extern multiboot_t *mboot_ptr_tmp;
 //开启分页机制后的内核栈
 //栈大小在pmm.h中声明
+
+
+//声明内核栈段，供以后使用,栈的起始位置是随机的
 uint8_t kern_stack[STACK_SIZE];
+
 
 //建立临时的页目录和页表
 //该地址需要4KB对齐，所以使用0-640K的内存空间建立临时页表
@@ -120,13 +126,14 @@ __attribute__((section(".init.text"))) void kern_entry()
 	//一个页表可以映射4MB的物理地址空间
 	//将虚拟地址空间中的0x00000000----0x00400000映射为物理地址的前4M
 	//将虚拟地址空间中的0xc0000000----0xc0400000映射为物理地址的前4M
+	//页表中存储的是物理地址页
 	uint32_t i=0;
 	for(i=0;i<1024;i++)
 	{
 		//low
 		low_pgd[i]=(uint32_t)(i*PMM_PAGE_SIZE)|PAGE_PRESENT|PAGE_WRITE;
 		//high
-		high_pgd[i]=(uint32_t)(PAGE_OFFSET+i*PMM_PAGE_SIZE)|PAGE_PRESENT|PAGE_WRITE;
+		high_pgd[i]=(uint32_t)(i*PMM_PAGE_SIZE)|PAGE_PRESENT|PAGE_WRITE;
 	}
 	//------------------开启分页模式------------------------
 	//1.将页目录地址放到cr3中
@@ -144,7 +151,7 @@ __attribute__((section(".init.text"))) void kern_entry()
 			:"=r"(cr0)
 			:
 		);
-	cr0=cr0|0x8000;
+	cr0=cr0|0x80000000;
 	asm volatile
 		(
 			"movl %0,%%cr0"
@@ -157,8 +164,8 @@ __attribute__((section(".init.text"))) void kern_entry()
 	glb_mboot_ptr=(multiboot_t *)((uint32_t)mboot_ptr_tmp+PAGE_OFFSET);
 	//----------------开始切换新的内核栈-------------------
 	//新的内核栈，需要修改的是栈顶指针esp的位置
-	//首先确定esp的地址，需要4KB对齐
-	uint32_t kern_stack_top=(uint32_t)((kern_stack+STACK_SIZE)+VIRTUAL_PAGE_MASK-1)&VIRTUAL_PAGE_MASK;
+	//首先确定esp的地址，需要4字节对齐
+	uint32_t kern_stack_top=(uint32_t)(kern_stack+STACK_SIZE)& 0xfffffff0;
 	//需要修改ebp和esp
 	asm volatile
 		(
@@ -167,6 +174,7 @@ __attribute__((section(".init.text"))) void kern_entry()
 			:
 			:"r"(kern_stack_top)
 		);
+	
 	//--------------跳转到内核处理模块-------------------
 	init_kern();
 	

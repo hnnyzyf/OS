@@ -78,8 +78,8 @@ stack:							;这里作为临时内核栈
 	times 1024 db 0
 STACK_TOP equ $-stack-1			;内核栈定,$代表当前地址
 
-mboot_ptr_tmp:dd 0				;全局的multiboot 结构指针
-
+mboot_ptr_tmp:
+	dd 0						;全局的multiboot 结构指针
 
 
 

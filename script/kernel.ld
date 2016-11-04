@@ -57,7 +57,6 @@ SECTIONS
 	}
 
 	PROVIDE( kern_end = . );
-    
 	/DISCARD/ :
 	{
 		*(.comment )

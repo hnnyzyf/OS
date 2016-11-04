@@ -43,7 +43,7 @@ static void move_cursor()
 //用白底黑字的空格符覆盖整个区域
 void console_clear()
 {
-	uint8_t attribute_byte=(0<<4)|(15&0x0F);
+	uint8_t attribute_byte=(0<<4)|(15& 0x0F);
 	uint16_t blank=0x20|(attribute_byte<<8);
 
 	int i;
