@@ -30,8 +30,9 @@ void init_kern()
 	init_debug();
 	//初始化中断
 	init_idt();	
-	console_clear();
 	*/
+	console_clear();
+	
     printf("Welcome to My OS!\n");
 	printf("This is only a demo\n");
 	printf("The function list is as followings:\n");
@@ -65,9 +66,9 @@ void init_kern()
 	//初始化虚拟内存管理模块
 	init_vmm();
 	*/
-	while(0)
+	while(1)
 	{
-		asm volatile("htl");
+		asm volatile("hlt");
 	}
 }
 
