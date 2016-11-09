@@ -1,2 +1,5 @@
-
+file mykernel
+target remote:1234
+b init_kern
+c
 

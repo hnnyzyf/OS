@@ -32,7 +32,7 @@ ASM=nasm
 #-fno-builtin不使用C语言的内建函数
 #-fno-stack-protector 禁用栈溢出保护机制
 #-I 指定目录include
-C_FLAGS=-c -Wall -m32 -ggdb -gstabs+ -nostdinc -fno-builtin -fno-stack-protector -I include
+C_FLAGS=-c -Wall -m32 -g -nostdinc -fno-builtin -fno-stack-protector -I include
 
 
 #LD链接器的链接选项
