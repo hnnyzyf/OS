@@ -26,7 +26,7 @@ pgd_t pgd_kern[PGD_SIZE] __attribute__((aligned(VIRTUAL_PAGE_SIZE)));
 //成员是页框的物理地址
 //长度是一页存储的页框物理地址个数 4kb/4b=1024
 //使用静态类型，只在本文件内有效
-static pte_t pte_kern[PTE_COUNT][PTE_SIZE] __attribute__((aligned(VIRTUAL_PAGE_SIZE)));
+static pte_t pte_kern[PGD_SIZE][PTE_SIZE] __attribute__((aligned(VIRTUAL_PAGE_SIZE)));
 
 //------------------------------虚拟页管理函数-----------------------------------
 
@@ -38,27 +38,49 @@ static pte_t pte_kern[PTE_COUNT][PTE_SIZE] __attribute__((aligned(VIRTUAL_PAGE_S
 void init_vmm()
 {
 	//---------------------需要重新设置页目录项-------------------
-	//因为内核页表只使用了0xc000,0000地址以上的内容，只需设置这个地址以上的内容即可
+
 	uint32_t i;
-	for(i=0;i<PTE_COUNT;i++)
+	for(i=0;i<PGD_SIZE;i++)
 	{
-		//将页表项指向页目录地址
-		//页目录应该为物理地址
-		pgd_kern[PGD_INDEX(PAGE_OFFSET)+VIRTUAL_PAGE_SIZE*i]=(pgd_t)(pte_kern[i]-PAGE_OFFSET)|PAGE_PRESENT|PAGE_WRITE;
+		pgd_kern[i]=((uint32_t)&pte_kern[i]-PAGE_OFFSET)|PAGE_PRESENT|PAGE_WRITE;
 	}
 	//---------------------需要重新设置页表---------------------
 	//页表需要指向物理地址
+	//1.1内核页表的设置
+	//映射到0xc000,0000以上
+	uint32_t kern_start_addr=kern_start-PAGE_OFFSET;
+	uint32_t kern_end_addr=kern_end-PAGE_OFFSET;
 	uint32_t j;
-	for(i=0;i<PTE_COUNT;i++)
+	for(i=PGD_INDEX(kern_start);i<PGD_INDEX(kern_end);i++)
+	{
+		//每一个页表项指向一个内核页
+		for(j=0;j<PTE_SIZE;j++)
+		{
+			pte_kern[i][j]=kern_start_addr;
+			kern_start_addr+=PMM_PAGE_SIZE;
+			
+		}
+	}
+	//1.2物理页表的设置
+	//映射到0x0的位置
+	uint32_t memory_start=get_memory_start();
+	uint32_t memory_length=get_memory_length();
+	for(i=PGD_INDEX(memory_start-memory_start);i<PGD_INDEX(memory_start+memory_length-memory_start);i++)
 	{
 		for(j=0;j<PTE_SIZE;j++)
 		{
-			//i是页表的基址 i<<12获得页表指向的基址
-			//12是以4M为单位，因为一个页表涵盖4M
-			//j是页框的基址
-			pte_kern[i][j]=(i<<12)+j*VIRTUAL_PAGE_SIZE;
+
 		}
 	}
+
+
+
+
+
+
+
+
+
 	//---------------------注册14号页故障中断----------------
 	register_interrupt_handler(IRQ14,page_fault);
 	//--------------------更新Cr3寄存器-------------------------

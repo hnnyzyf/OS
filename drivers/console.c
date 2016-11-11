@@ -127,18 +127,17 @@ void console_putc_color(char c,real_color_t back,real_color_t fore)
 		cursor_y++;
 	}
 	//如果是回车
-	else if(c=='r')
+	else if(c==0x13)
 	{
 		cursor_x=0;
 		cursor_y++;
 	}
 	//如果是各种字符,则需要赋值
-	else if(c>=32 && c<=126)
+	else if((c>=32 && c<=126))
 	{
 		video_memory[cursor_y*80+cursor_x]=c|attribute;
 		cursor_x++;
-	}
-
+	}	
 	//判断cursor_x是否应该换行了
 	if(cursor_x>=80)
 	{
@@ -156,24 +155,22 @@ void console_putc_color(char c,real_color_t back,real_color_t fore)
 //打印一个字符串
 void console_write(char *cstr)
 {
-	char *temp=cstr;
 	//cstr不等于零
-	while(*temp!='\0')
+	while(*cstr!='\0')
 	{
-		console_putc_color(*temp,0,15);
-		temp=temp+1;
+		console_putc_color(*cstr,0,15);
+		cstr++;
 	}
 }
 
 //打印一个带颜色的字符串
 void console_write_color(char *cstr,real_color_t back,real_color_t fore)
 {
-	char *temp=cstr;
 	//cstr不等于零
-	while(*temp!='\0')
+	while(*cstr!='\0')
 	{
-		console_putc_color(*temp,back,fore);
-		temp=temp+1;
+		console_putc_color(*cstr,back,fore);
+		cstr++;
 	}
 }
 

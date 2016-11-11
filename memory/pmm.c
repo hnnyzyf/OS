@@ -15,6 +15,11 @@
 
 #define debug 0
 
+
+static uint32_t phy_memory_start;
+static uint32_t phy_memory_length;
+static uint32_t kernel_size;
+
 //获取操作系统的内存
 void show_memory_map()
 {
@@ -29,7 +34,7 @@ void show_memory_map()
 	{
 		printf("baseaddress:%x length:%x type:%x\n",(uint32_t)mmap[i].base_addr_low,(uint32_t)mmap[i].length_low,(uint32_t)mmap[i].type);
 	}
-
+	//memory_size=(uint32_t)mmap[mmap_length-1].base_addr_low+(uint32_t)mmap[i].length_low;
 }
 
 
@@ -39,9 +44,23 @@ void show_kernel_map()
 	printf("Kernel Memory Map:\n");
 	printf("kernel in memory start:%x\n",kern_start);
 	printf("kernel in memory stop:%x\n",kern_end);
-	//uint32_t used=(kern_end-kern_start+1023);
+	//uint32_t kernel_size=(kern_end-kern_start+1023);
 	//printf("kernel in memory used:%d B\n",used);
 }
+
+
+//返回系统信息
+
+uint32_t get_memory_start()
+{
+	return phy_memory_start;
+}
+
+uint32_t get_memory_length()
+{
+	return phy_memory_length;
+}
+
 
 //----------------------------物理内存分配函数----------------------------------
 
@@ -96,6 +115,8 @@ void init_pmm()
 			}
 		}
 	}
+	phy_memory_start=mmap[i-1].base_addr_low;
+	phy_memory_length=mmap[i-1].base_length_low;
 
 }
 

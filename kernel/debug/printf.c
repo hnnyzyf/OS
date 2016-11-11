@@ -50,9 +50,9 @@ static int itoc(char *buff,uint32_t src,int radix,char word[],int location)
 		buff[++location]='X';
 		start=start+2;
 	}
-	else
+	if(src==0)
 	{
-		buff[++location]=0;
+		buff[++location]='0';
 	}
 	//记录起始位置
 	while(src!=0)

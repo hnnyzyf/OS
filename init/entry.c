@@ -14,7 +14,7 @@
 #include "pmm.h"
 #include "vmm.h"
 
-#define debug 0
+#define debug 2
 
 //用于初始化操作系统的如下内容
 //初始化段寄存器GDT
@@ -24,13 +24,12 @@
 //初始化虚拟内存管理VMM，开启分页管理模式
 void init_kern()
 {
-	/*
+	
     //初始化段式管理
 	init_gdt();
 	init_debug();
 	//初始化中断
 	init_idt();	
-	*/
 	console_clear();
 	
     printf("Welcome to My OS!\n");
@@ -42,30 +41,36 @@ void init_kern()
 	printf("4.print Clock setting!\n");
 	printf("5.Memory Management!\n");
 	
-	/*
+	
 #if debug==1	
 	panic("this is a kernal stack information!\n");
 #endif
+	
 	//初始化可编程中断，初始化时钟
 	init_timer(60);
 	//因为初始化过程中关闭了中断，需要开中断
 	asm volatile("sti");
+	
 	//初始化物理内存管理模块
 	init_pmm();
+
 #if debug==2
 	uint32_t page=pmm_alloc_page();
 	printf("the page address is %x\n",page);
 	pmm_free_page(page);
 	show_memory_map();
 	show_kernel_map();
+	get_kernel_size();
 #endif
+
 #if debug==3
 	get_multiboot_structure();
 #endif 
-	//此处需要中止，调用htl,防止跳出程序
+	
+	//此处需要中止，调用hlt,防止跳出程序
 	//初始化虚拟内存管理模块
-	init_vmm();
-	*/
+	//init_vmm();
+	
 	while(1)
 	{
 		asm volatile("hlt");

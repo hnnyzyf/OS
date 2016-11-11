@@ -14,7 +14,7 @@
 
 #define debug 0
 
-static uint32_t tick=0;
+static uint32_t tick=1;
 
 //声明中断处理函数
 void timer_callback(reg_t* regs)
@@ -23,11 +23,11 @@ void timer_callback(reg_t* regs)
 	//判断中断次数是否正常
 	if(tick<0xffffffff)
 	{
-		printf("Tick:%d\n",tick++);
+		printf("Tick:%d \n",tick++);
 	}
 	else
 	{
-		printf("Tick:%d\n",tick);
+		printf("Tick:%d \n",tick);
 		tick=0;
 	}
 #endif

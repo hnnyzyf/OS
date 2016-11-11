@@ -20,9 +20,16 @@ extern uint8_t kern_end[];
 
 
 //定义获取操作系统内存
-void show_memory_map();
+void  show_memory_map();
 
-void show_kernel_map();
+//获得内核内存分布
+void  show_kernel_map();
+
+//获得操作系统的内存
+uint32_t get_memory_start();
+
+//获得内核的内存
+uint32_t get_kernel_length();
 
 //-----------------------------------物理内存管理--------------------------------
 

@@ -71,7 +71,7 @@ typedef uint32_t pte_t;
 //页表成员数量
 #define PTE_SIZE (VIRTUAL_PAGE_SIZE/sizeof(uint32_t))
 
-//映射512M内存所需要的页表数
+//映射512M内存所需要的页表数,该内存是最大的物理内存
 #define PTE_COUNT (512/4)
 
 //内核页目录区域
