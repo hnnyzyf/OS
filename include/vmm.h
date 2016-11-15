@@ -46,13 +46,13 @@
 #define VIRTUAL_PAGE_MASK 0xffffc000
 
 //获取一个地址的页目录项
-#define PGD_INDEX(x) ((x>>22)& 0xfff)
+#define PGD_INDEX(x) (((x)>>22)& 0xfff)
 
 //获取一个地址的页表偏移
-#define PTE_INDEX(x) ((x>>12)& 0x3ff)
+#define PTE_INDEX(x) (((x)>>12)& 0x3ff)
 
 //获取一个地址的页内偏移
-#define OFFSET_INDEX(x)	(x& 0xfff) 
+#define OFFSET_INDEX(x)	((x)& 0xfff) 
 
 //--------------定义数据结构-------------------------
 //页目录表的表项数据结构

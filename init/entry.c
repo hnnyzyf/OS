@@ -14,7 +14,9 @@
 #include "pmm.h"
 #include "vmm.h"
 
-#define debug 2
+#define debug 4
+
+extern pgd_t pgd_kern[PGD_SIZE];
 
 //用于初始化操作系统的如下内容
 //初始化段寄存器GDT
@@ -60,7 +62,6 @@ void init_kern()
 	pmm_free_page(page);
 	show_memory_map();
 	show_kernel_map();
-	get_kernel_size();
 #endif
 
 #if debug==3
@@ -69,7 +70,9 @@ void init_kern()
 	
 	//此处需要中止，调用hlt,防止跳出程序
 	//初始化虚拟内存管理模块
-	//init_vmm();
+	init_vmm();
+#if debug==4
+#endif
 	
 	while(1)
 	{

@@ -26,7 +26,7 @@ pgd_t pgd_kern[PGD_SIZE] __attribute__((aligned(VIRTUAL_PAGE_SIZE)));
 //成员是页框的物理地址
 //长度是一页存储的页框物理地址个数 4kb/4b=1024
 //使用静态类型，只在本文件内有效
-static pte_t pte_kern[PGD_SIZE][PTE_SIZE] __attribute__((aligned(VIRTUAL_PAGE_SIZE)));
+static pte_t pte_kern[PTE_COUNT][PTE_SIZE] __attribute__((aligned(VIRTUAL_PAGE_SIZE)));
 
 //------------------------------虚拟页管理函数-----------------------------------
 
@@ -38,51 +38,27 @@ static pte_t pte_kern[PGD_SIZE][PTE_SIZE] __attribute__((aligned(VIRTUAL_PAGE_SI
 void init_vmm()
 {
 	//---------------------需要重新设置页目录项-------------------
-
-	uint32_t i;
-	for(i=0;i<PGD_SIZE;i++)
+	//内核结束点
+	uint32_t kern_end_addr=(uint32_t)kern_end;
+	uint32_t i,j;
+	//设置内核页目录项
+	for(i=PGD_INDEX(PAGE_OFFSET),j=0;i<=PGD_INDEX(kern_end_addr);i++,j++)
 	{
-		pgd_kern[i]=((uint32_t)&pte_kern[i]-PAGE_OFFSET)|PAGE_PRESENT|PAGE_WRITE;
+		pgd_kern[i]=((uint32_t)pte_kern[j]-PAGE_OFFSET)|PAGE_PRESENT|PAGE_WRITE;
 	}
-	//---------------------需要重新设置页表---------------------
-	//页表需要指向物理地址
-	//1.1内核页表的设置
-	//映射到0xc000,0000以上
-	uint32_t kern_start_addr=kern_start-PAGE_OFFSET;
-	uint32_t kern_end_addr=kern_end-PAGE_OFFSET;
-	uint32_t j;
-	for(i=PGD_INDEX(kern_start);i<PGD_INDEX(kern_end);i++)
+	//设置内核页表项
+	uint32_t phy_base_addr=0x0;
+	for(i=0;i<=PGD_INDEX(kern_end_addr-PAGE_OFFSET);i++)
 	{
-		//每一个页表项指向一个内核页
-		for(j=0;j<PTE_SIZE;j++)
+		for(j=0;phy_base_addr+PAGE_OFFSET<kern_end_addr&&(j<1024);j++)
 		{
-			pte_kern[i][j]=kern_start_addr;
-			kern_start_addr+=PMM_PAGE_SIZE;
-			
+			pte_kern[i][j]=phy_base_addr|PAGE_PRESENT|PAGE_WRITE;
+			phy_base_addr+=VIRTUAL_PAGE_SIZE;
 		}
 	}
-	//1.2物理页表的设置
-	//映射到0x0的位置
-	uint32_t memory_start=get_memory_start();
-	uint32_t memory_length=get_memory_length();
-	for(i=PGD_INDEX(memory_start-memory_start);i<PGD_INDEX(memory_start+memory_length-memory_start);i++)
-	{
-		for(j=0;j<PTE_SIZE;j++)
-		{
-
-		}
-	}
-
-
-
-
-
-
-
-
 
 	//---------------------注册14号页故障中断----------------
-	register_interrupt_handler(IRQ14,page_fault);
+	register_interrupt_handler(IRQ14,&page_fault);
 	//--------------------更新Cr3寄存器-------------------------
 	uint32_t kern_stack_phy_address=(uint32_t)pgd_kern-PAGE_OFFSET;
 	switch_pgd(kern_stack_phy_address);

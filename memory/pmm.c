@@ -18,7 +18,6 @@
 
 static uint32_t phy_memory_start;
 static uint32_t phy_memory_length;
-static uint32_t kernel_size;
 
 //获取操作系统的内存
 void show_memory_map()
@@ -116,7 +115,7 @@ void init_pmm()
 		}
 	}
 	phy_memory_start=mmap[i-1].base_addr_low;
-	phy_memory_length=mmap[i-1].base_length_low;
+	phy_memory_length=mmap[i-1].length_low;
 
 }
 
