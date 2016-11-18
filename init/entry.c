@@ -14,7 +14,7 @@
 #include "pmm.h"
 #include "vmm.h"
 
-#define debug 4
+#define debug 2
 
 extern pgd_t pgd_kern[PGD_SIZE];
 
@@ -73,7 +73,12 @@ void init_kern()
 	init_vmm();
 #if debug==4
 #endif
-	
+	init_heap();
+
+#if debug==5
+	test_heap();
+#endif
+
 	while(1)
 	{
 		asm volatile("hlt");

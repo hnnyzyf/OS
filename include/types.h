@@ -35,4 +35,13 @@ typedef unsigned char uint8_t;
 //定义有符号8位二进制
 typedef char int8_t;
 
+
+
+//按照size对齐
+#define _align(a,size)	(((a)+(size)-1) & ~((size)-1))
+//求地址a以size为规模的上界
+#define _align_down(a,size)	((a) & ~(size-1))
+//求下界
+#define _align_up(a,size)	((a+size-1) & ~(size-1))
+
 #endif //INCLUDE_TYPES_H_
