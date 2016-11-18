@@ -214,6 +214,8 @@ void *kmalloc(uint32_t len)
 	{
 		heap_start=(header_t *)heap_max;
 	}
+	//需要立刻分配内存，因为此时虚拟页对应的物理内存，会立刻报警缺页中断
+	alloc_chunk();
 	//如果header需要放在新的内存块中，初始化新的header
 	heap_start->prev=parent_header;
 	heap_start->next=0;
@@ -224,7 +226,6 @@ void *kmalloc(uint32_t len)
 	//判断要申请的内存是否是满足条件
 	//再重新调用kmalloc
 	return kmalloc(len);
-	
 }
 
 

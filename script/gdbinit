@@ -1,5 +1,13 @@
 file mykernel
 target remote:1234
-b init_kern
+b test_heap
+b kmalloc
+b kfree
+b alloc_chunk
+b split_chunk
+b combine_chunk
+b free_chunk
+b map
+b unmap
 c
 

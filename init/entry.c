@@ -13,8 +13,9 @@
 #include "timer.h"
 #include "pmm.h"
 #include "vmm.h"
+#include "heap.h"
 
-#define debug 2
+#define debug 5
 
 extern pgd_t pgd_kern[PGD_SIZE];
 
