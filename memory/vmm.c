@@ -26,6 +26,7 @@ pgd_t pgd_kern[PGD_SIZE] __attribute__((aligned(VIRTUAL_PAGE_SIZE)));
 //成员是页框的物理地址
 //长度是一页存储的页框物理地址个数 4kb/4b=1024
 //使用静态类型，只在本文件内有效
+//操作系统最大是512M，再大就玩不转了
 static pte_t pte_kern[PTE_COUNT][PTE_SIZE] __attribute__((aligned(VIRTUAL_PAGE_SIZE)));
 
 //------------------------------虚拟页管理函数-----------------------------------
@@ -56,6 +57,7 @@ void init_vmm()
 			phy_base_addr+=VIRTUAL_PAGE_SIZE;
 		}
 	}
+	//---------------------映射物理内存--------------------------
 
 	//---------------------注册14号页故障中断----------------
 	register_interrupt_handler(IRQ14,&page_fault);
@@ -84,27 +86,30 @@ void map(pgd_t *pgd_now,uint32_t virtual_addr,uint32_t physical_addr,uint32_t fl
 	//获得线性地址的页目录项索引和页表索引
 	uint32_t pgd_index=PGD_INDEX(virtual_addr);
 	uint32_t pte_index=PTE_INDEX(virtual_addr);
-
-	//先判断是否已经在页表中映射了物理内存
-	//获得页目录项，页目录项中存储的是物理地址
-	pgd_t *pgd_temp=(pgd_t *)pgd_now[pgd_index];
-	//声明页表，访问页表需要访问虚拟地址
-	pte_t *pte_temp;
-	//1.判断页目录项是否已经指向了一个页表，如果没有，则需要申请一个物理页
-	if(!pgd_temp)
+	uint32_t pte_page=0;
+	pte_t * pte_temp=NULL;
+	uint32_t phy_page=0;
+	//先判断是否存在映射
+	//如果页目录项不存在
+	if(pgd_now[pgd_index]==0)
 	{
-		//获得一个物理页，且插入页目录项的物理地址
-		pgd_temp=(pgd_t *)pmm_alloc_page();
-		pgd_now[pgd_index]=(uint32_t)pgd_temp|PAGE_PRESENT|PAGE_WRITE;
-		//获得页表的虚拟的地址(线性地址)
-
+		//1.插入一个新的页目录项
+		pte_page=pmm_alloc_page();
+		pgd_now[pgd_index]=(pgd_t)pte_page|flags;
+		//2.插入一个新的页表项
+		phy_page=pmm_alloc_page();
+		//2.1 pte_temp的虚拟地址是pte_page+Pafe_offset
+		pte_temp=(pte_t *)(pte_page+PAGE_OFFSET);
+		
 	}
-	//2.如果已经存在该页目录项，则去该目录对应的页表查询是否存在对应的物理页
-	pte_temp=(pte_t *)(pgd_now[pgd_index]+PAGE_OFFSET);
-	//3.将物理页插入到对应的页表项中以完成映射
-	pte_temp[pte_index]=(uint32_t)physical_addr|flags;
-
-	//4.通知cpu更新页缓存
+	//如果页目录项存在
+	else 
+	{
+		//没有对应的页表项
+		if()
+	}
+	
+	
 	asm volatile("invlpg (%0)"::"a"(virtual_addr));
 }
 
