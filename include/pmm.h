@@ -19,6 +19,7 @@ extern uint8_t kern_start[];
 extern uint8_t kern_end[];
 
 
+
 //定义获取操作系统内存
 void  show_memory_map();
 

@@ -15,7 +15,7 @@
 #include "vmm.h"
 #include "heap.h"
 
-#define debug 5
+#define debug 0
 
 extern pgd_t pgd_kern[PGD_SIZE];
 
@@ -57,14 +57,13 @@ void init_kern()
 	//初始化物理内存管理模块
 	init_pmm();
 
-#if debug==2
+
 	uint32_t page=pmm_alloc_page();
 	printf("the page address is %x\n",page);
 	pmm_free_page(page);
 	show_memory_map();
 	show_kernel_map();
-#endif
-
+	
 #if debug==3
 	get_multiboot_structure();
 #endif 
@@ -73,13 +72,13 @@ void init_kern()
 	//初始化虚拟内存管理模块
 	init_vmm();
 #if debug==4
-#endif
 	init_heap();
+#endif
 
 #if debug==5
 	test_heap();
 #endif
-
+	
 	while(1)
 	{
 		asm volatile("hlt");
@@ -98,7 +97,7 @@ void init_kern()
 
 
 //全局的multiboot头声明，其他文件使用需要使用extern关键字
-multiboot_t * glb_mboot_ptr;
+multiboot_t * glb_mboot_ptr=0x0000;
 extern multiboot_t *mboot_ptr_tmp;
 //开启分页机制后的内核栈
 //栈大小在pmm.h中声明
@@ -112,14 +111,14 @@ uint8_t kern_stack[STACK_SIZE];
 //该地址需要4KB对齐，所以使用0-640K的内存空间建立临时页表
 //需要将如下变量声明为.init.data段
 //页目录项只有一页
-//将页目录项声明为数据,该数组起始地址使用物理地址0x1000
+//将页目录项声明为数据,该数组起始地址使用地址0x1000
 //pde_t为4字节，需要存储1024个页表项
 __attribute__((section(".init.data"))) pgd_t *temp_pgd=(pgd_t *)0x1000;
 //声明第一个页表,页表为4kb
-__attribute__((section(".init.data"))) pgd_t *low_pgd=(pgd_t *)0x2000;
+__attribute__((section(".init.data"))) pte_t *low_pgd=(pte_t *)0x2000;
 //声明第二个页表,页表为4KB
 __attribute__((section(".init.data"))) pgd_t *high_pgd=(pgd_t *)0x3000;
-//只使用一个临时页表的原因为默认核心部的init部分不会大于4M
+//只使用一个临时页表的原因为默认核心部的init部分不会大于8M
 
 
 //声明全局的kernel入口函数
@@ -131,16 +130,17 @@ __attribute__((section(".init.text"))) void kern_entry()
 	//low里存储的是0x100000,化为二进制为0000,0000,0001,0000,0000,0000,0000,0000
 	//所以前十位为0000,0000,00，故为页表项的第0项,将low页表的地址存储如pgd中
 	temp_pgd[0]=(uint32_t)low_pgd|PAGE_PRESENT|PAGE_WRITE;
+	temp_pgd[1]=(uint32_t)high_pgd|PAGE_PRESENT|PAGE_WRITE;
 	//high里存储的是PAGE_OFFSET，回味二进制为1100,0,0,0,0,0,0,0
 	//所以前十位为11，0000，0000，故为页表项的第0x300项，将high页表的地址存储如pgd中
 	//特权级:P位有效，R/W位有效，U/S位无效
-	temp_pgd[PGD_INDEX(PAGE_OFFSET)]=(uint32_t)high_pgd|PAGE_PRESENT|PAGE_WRITE;
-
+	temp_pgd[PGD_INDEX(PAGE_OFFSET)]=(uint32_t)low_pgd|PAGE_PRESENT|PAGE_WRITE;
+	temp_pgd[PGD_INDEX(PAGE_OFFSET)+1]=(uint32_t)high_pgd|PAGE_PRESENT|PAGE_WRITE;
 	//------------------设置页表内容------------------------
 	//页表内容代表的是实际的物理页地址
 	//一个页表可以映射4MB的物理地址空间
-	//将虚拟地址空间中的0x00000000----0x00400000映射为物理地址的前4M
-	//将虚拟地址空间中的0xc0000000----0xc0400000映射为物理地址的前4M
+	//将虚拟地址空间中的0x00000000----0x00800000映射为物理地址的前8M
+	//将虚拟地址空间中的0xc0000000----0xc0800000映射为物理地址的前8M
 	//页表中存储的是物理地址页
 	uint32_t i=0;
 	for(i=0;i<1024;i++)
@@ -148,7 +148,7 @@ __attribute__((section(".init.text"))) void kern_entry()
 		//low
 		low_pgd[i]=(uint32_t)(i*PMM_PAGE_SIZE)|PAGE_PRESENT|PAGE_WRITE;
 		//high
-		high_pgd[i]=(uint32_t)(i*PMM_PAGE_SIZE)|PAGE_PRESENT|PAGE_WRITE;
+		high_pgd[i]=(uint32_t)((i+1024)*PMM_PAGE_SIZE)|PAGE_PRESENT|PAGE_WRITE;
 	}
 	//------------------开启分页模式------------------------
 	//1.将页目录地址放到cr3中
@@ -189,7 +189,6 @@ __attribute__((section(".init.text"))) void kern_entry()
 			:
 			:"r"(kern_stack_top)
 		);
-	
 	//--------------跳转到内核处理模块-------------------
 	init_kern();
 	

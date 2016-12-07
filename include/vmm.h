@@ -72,7 +72,21 @@ typedef uint32_t pte_t;
 #define PTE_SIZE (VIRTUAL_PAGE_SIZE/sizeof(uint32_t))
 
 //映射512M内存所需要的页表数,该内存是最大的物理内存
-#define PTE_COUNT (512/4)
+#define PTE_COUNT (1024-128/4)
+
+//映射vmalloc的空间为128M
+
+//获取一个地址的物理地址
+#define	__PA(x) ((x)-PAGE_OFFSET)
+
+//获取一个地址的虚拟地址
+#define __VA(x)	((x)+PAGE_OFFSET)
+
+//获得一个页表的物理地址
+#define __PTEADDRESS(x) __VA(((x)& 0xffffff000))
+
+//获得一个数据页的物理地址
+#define __PAGEADDRESS(x) __VA(((x)& 0xffffff000))
 
 //内核页目录区域
 extern pgd_t pgd_kern[PGD_SIZE];

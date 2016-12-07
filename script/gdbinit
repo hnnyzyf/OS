@@ -1,13 +1,10 @@
 file mykernel
 target remote:1234
-b test_heap
-b kmalloc
-b kfree
-b alloc_chunk
-b split_chunk
-b combine_chunk
-b free_chunk
-b map
-b unmap
+b kern_entry
+b init_kern
+c
+b 177
+c
+
 
 
